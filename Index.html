@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyzenID - Cloudflare Temp Mail</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-color: #38bdf8;
+            --border-color: #334155;
+            --input-bg: #0f172a;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 50px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 700px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--accent-color);
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .email-section {
+            background: var(--input-bg);
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            gap: 10px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        input#emailAddr {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 16px;
+            outline: none;
+            font-family: monospace;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        button {
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .btn-primary { background: var(--accent-color); color: #0f172a; }
+        .btn-secondary { background: #334155; color: white; }
+
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .inbox-container {
+            margin-top: 20px;
+        }
+
+        .inbox-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        #mailList {
+            min-height: 200px;
+        }
+
+        .mail-card {
+            background: #334155;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .no-mail {
+            text-align: center;
+            color: #94a3b8;
+            margin-top: 40px;
+        }
+
+        .loader {
+            text-align: center;
+            display: none;
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>StyzenID Digital Mail</h1>
+            <p style="color: #94a3b8;">Temporary Email Powered by Cloudflare</p>
+        </header>
+
+        <div class="email-section">
+            <input type="text" id="emailAddr" readonly placeholder="Klik generate...">
+            <div class="btn-group">
+                <button class="btn-primary" onclick="generateEmail()">New</button>
+                <button class="btn-secondary" onclick="copyEmail()">Copy</button>
+            </div>
+        </div>
+
+        <div class="inbox-container">
+            <div class="inbox-header">
+                <h3>Kotak Masuk</h3>
+                <button class="btn-secondary" onclick="checkMail()">Refresh Manual</button>
+            </div>
+            
+            <div id="loader" class="loader">Mengecek email baru...</div>
+            <div id="mailList">
+                <div class="no-mail">Alamat email belum dibuat atau belum ada pesan.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* --- KONFIGURASI --- */
+        const workerUrl = "ISI_URL_WORKER_DISINI"; // MASUKKAN URL CLOUDFLARE WORKER ANDA DI SINI
+        const domainSaya = "domainanda.com"; // GANTI DENGAN DOMAIN ANDA YANG SUDAH DI CLOUDFLARE
+        /* ------------------- */
+
+        function generateEmail() {
+            const randomString = Math.random().toString(36).substring(2, 10);
+            const fullEmail = `${randomString}@${domainSaya}`;
+            document.getElementById('emailAddr').value = fullEmail;
+            
+            // Bersihkan tampilan inbox saat ganti email
+            document.getElementById('mailList').innerHTML = '<div class="no-mail">Menunggu email masuk ke alamat baru...</div>';
+            
+            // Mulai pengecekan otomatis
+            checkMail();
+        }
+
+        function copyEmail() {
+            const emailInput = document.getElementById('emailAddr');
+            if(!emailInput.value) return alert("Generate email dulu!");
+            
+            emailInput.select();
+            document.execCommand('copy');
+            alert("Email disalin ke clipboard!");
+        }
+
+        async function checkMail() {
+            const email = document.getElementById('emailAddr').value;
+            if(!email || !workerUrl.startsWith("http")) return;
+
+            const loader = document.getElementById('loader');
+            const mailList = document.getElementById('mailList');
+            
+            loader.style.display = "block";
+
+            try {
+                // Memanggil Cloudflare Worker
+                const response = await fetch(`${workerUrl}?addr=${email}`);
+                const data = await response.text();
+
+                loader.style.display = "none";
+
+                if (data === "Belum ada pesan masuk.") {
+                    // Jangan ubah tampilan jika memang belum ada
+                } else {
+                    // Jika ada email, tampilkan di kotak masuk
+                    mailList.innerHTML = `
+                        <div class="mail-card">
+                            <div style="font-size: 12px; color: #38bdf8; margin-bottom: 5px;">Pesan Baru Diterima</div>
+                            <pre style="white-space: pre-wrap; word-wrap: break-word; font-family: sans-serif; margin: 0; color: #fff;">${data}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                loader.style.display = "none";
+            }
+        }
+
+        // Auto refresh setiap 10 detik jika email sudah di-generate
+        setInterval(() => {
+            if(document.getElementById('emailAddr').value) {
+                checkMail();
+            }
+        }, 10000);
+    </script>
+</body>
+  </html>
+                                                                    
