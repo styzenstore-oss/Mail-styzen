@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyzenID | Automatic Order</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="Mid-client-hg1A2J1wEhpbgkPc"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { background-color: #0f172a; color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .gradient-btn { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
+        .cart-badge { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; font-size: 10px; padding: 2px 6px; border-radius: 50%; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(2, 6, 23, 0.95); z-index: 100; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="max-w-6xl mx-auto px-6 py-8 flex justify-between items-center">
+        <div class="text-2xl font-extrabold tracking-tighter">Styzen<span class="text-indigo-500">ID</span></div>
+        <div class="relative cursor-pointer" onclick="openCart()">
+            <i class="fa-solid fa-cart-shopping text-2xl text-slate-300"></i>
+            <span id="cartCount" class="cart-badge">0</span>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-6 pb-24">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-extrabold mb-2">Digital <span class="text-indigo-500">Auto-Gateway</span></h1>
+            <p class="text-slate-400">Pembayaran Otomatis QRIS & E-Wallet</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="glass-card rounded-3xl p-8 text-center">
+                <i class="fa-solid fa-vault text-green-400 text-3xl mb-4"></i>
+                <h2 class="text-xl font-bold">WISE</h2>
+                <p class="text-indigo-400 font-bold mb-6">Rp 200.000</p>
+                <button onclick="addToCart('WISE', 200000)" class="w-full py-3 gradient-btn rounded-xl font-bold">+ Keranjang</button>
+            </div>
+            <div class="glass-card rounded-3xl p-8 text-center">
+                <i class="fa-solid fa-palette text-blue-400 text-3xl mb-4"></i>
+                <h2 class="text-xl font-bold">CANVA</h2>
+                <p class="text-indigo-400 font-bold mb-6">Rp 5.000</p>
+                <button onclick="addToCart('CANVA', 5000)" class="w-full py-3 gradient-btn rounded-xl font-bold">+ Keranjang</button>
+            </div>
+            <div class="glass-card rounded-3xl p-8 text-center">
+                <i class="fa-brands fa-paypal text-sky-400 text-3xl mb-4"></i>
+                <h2 class="text-xl font-bold">PAYPAL</h2>
+                <p class="text-indigo-400 font-bold mb-6">Rp 20.000</p>
+                <button onclick="addToCart('PAYPAL', 20000)" class="w-full py-3 gradient-btn rounded-xl font-bold">+ Keranjang</button>
+            </div>
+        </div>
+    </main>
+
+    <div id="cartModal" class="modal px-4">
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-[2rem] max-w-md w-full shadow-2xl">
+            <h3 class="text-xl font-bold mb-4">Keranjang Belanja</h3>
+            <div id="cartItems" class="space-y-4 mb-6"></div>
+            <div class="flex justify-between font-bold text-lg border-t border-slate-800 pt-4 mb-6">
+                <span>Total</span>
+                <span id="cartTotalText" class="text-indigo-400">Rp 0</span>
+            </div>
+            <button onclick="payNow()" class="w-full py-4 gradient-btn rounded-2xl font-bold mb-3">BAYAR SEKARANG (OTOMATIS)</button>
+            <button onclick="closeCart()" class="w-full text-slate-500 text-sm">Kembali</button>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+        const WA_ADMIN = "6281232715307";
+
+        function addToCart(name, price) {
+            const index = cart.findIndex(item => item.name === name);
+            if (index > -1) { cart[index].qty++; } 
+            else { cart.push({ name, price, qty: 1 }); }
+            updateUI();
+        }
+
+        function updateQty(name, delta) {
+            const index = cart.findIndex(item => item.name === name);
+            if (index > -1) {
+                cart[index].qty += delta;
+                if (cart[index].qty <= 0) cart.splice(index, 1);
+            }
+            updateUI();
+        }
+
+        function updateUI() {
+            const itemsDiv = document.getElementById('cartItems');
+            let total = 0;
+            let count = 0;
+            let html = '';
+
+            cart.forEach(item => {
+                total += item.price * item.qty;
+                count += item.qty;
+                html += `
+                <div class="flex justify-between items-center bg-slate-800 p-3 rounded-xl">
+                    <span class="text-sm font-bold">${item.name}</span>
+                    <div class="flex items-center gap-2">
+                        <button onclick="updateQty('${item.name}', -1)" class="px-2 bg-slate-700 rounded">-</button>
+                        <span>${item.qty}</span>
+                        <button onclick="updateQty('${item.name}', 1)" class="px-2 bg-indigo-600 rounded">+</button>
+                    </div>
+                </div>`;
+            });
+
+            itemsDiv.innerHTML = html || '<p class="text-center text-slate-500">Kosong</p>';
+            document.getElementById('cartCount').innerText = count;
+            document.getElementById('cartTotalText').innerText = "Rp " + total.toLocaleString();
+        }
+
+        function openCart() { document.getElementById('cartModal').classList.add('active'); }
+        function closeCart() { document.getElementById('cartModal').classList.remove('active'); }
+
+        async function payNow() {
+            if (cart.length === 0) return alert("Keranjang kosong!");
+
+            // GENERATE TX ID
+            const txId = "STYZEN-" + Math.floor(Date.now() / 1000);
+            let itemsString = cart.map(i => `${i.name} (${i.qty}x)`).join(", ");
+            let total = cart.reduce((a, b) => a + (b.price * b.qty), 0);
+
+            // LOGIKA GATEWAY
+            // Di sistem nyata, kamu butuh server untuk mendapatkan 'Snap Token'.
+            // Kode di bawah ini memicu Snap Popup Midtrans.
+            
+            window.snap.pay('TOKEN_DARI_SERVER_ANDA', {
+                onSuccess: function(result) {
+                    alert("Pembayaran Berhasil!");
+                    window.location.href = `https://wa.me/${WA_ADMIN}?text=PEMBAYARAN_OTOMATIS_BERHASIL%0ATX_ID:_${txId}%0AProduk:_${itemsString}`;
+                },
+                onPending: function(result) {
+                    alert("Menunggu pembayaran...");
+                },
+                onError: function(result) {
+                    alert("Pembayaran gagal!");
+                },
+                onClose: function() {
+                    alert('Anda menutup popup sebelum selesai membayar.');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
