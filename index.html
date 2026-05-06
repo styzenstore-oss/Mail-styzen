@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyzenID | Digital Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { background-color: #020617; color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .gradient-btn { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); z-index: 100; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .hidden-section { display: none !important; }
+        .loader { border: 3px solid #1e293b; border-top: 3px solid #6366f1; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="authSection" class="fixed inset-0 z-[200] bg-slate-950 flex items-center justify-center p-6">
+        <div class="glass-card p-10 rounded-[2.5rem] max-w-sm w-full text-center border border-indigo-500/10 shadow-2xl">
+            <h2 class="text-3xl font-extrabold mb-2 tracking-tighter text-white uppercase">Styzen<span class="text-indigo-500">ID</span></h2>
+            <p id="authTitle" class="text-slate-500 text-[10px] uppercase tracking-[0.2em] mb-8">Secure Digital Account</p>
+            
+            <div id="loginForm" class="space-y-4">
+                <input type="text" id="userEmail" placeholder="Username" class="w-full bg-slate-900 border border-slate-800 rounded-2xl px-5 py-4 outline-none text-sm focus:border-indigo-500 transition text-white">
+                <input type="password" id="userPass" placeholder="Password" class="w-full bg-slate-900 border border-slate-800 rounded-2xl px-5 py-4 outline-none text-sm focus:border-indigo-500 transition text-white">
+                <button onclick="handleAuth('login')" class="w-full py-4 gradient-btn rounded-2xl font-bold shadow-xl shadow-indigo-500/20 uppercase tracking-widest text-xs">Masuk Sekarang</button>
+                <p class="text-[11px] text-slate-500">Belum punya akun? <span class="text-indigo-400 cursor-pointer font-bold" onclick="toggleAuth(true)">Daftar</span></p>
+            </div>
+
+            <div id="signupForm" class="space-y-4 hidden-section">
+                <input type="text" id="regUser" placeholder="Buat Username" class="w-full bg-slate-900 border border-slate-800 rounded-2xl px-5 py-4 outline-none text-sm text-white">
+                <input type="password" id="regPass" placeholder="Buat Password" class="w-full bg-slate-900 border border-slate-800 rounded-2xl px-5 py-4 outline-none text-sm text-white">
+                <button onclick="handleAuth('signup')" class="w-full py-4 bg-white text-black rounded-2xl font-bold uppercase tracking-widest text-xs">Buat Akun</button>
+                <p class="text-[11px] text-slate-500">Sudah punya akun? <span class="text-indigo-400 cursor-pointer font-bold" onclick="toggleAuth(false)">Login</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="mainApp" class="hidden-section">
+        <nav class="max-w-6xl mx-auto px-6 py-8 flex justify-between items-center">
+            <div onclick="adminClick()" class="text-2xl font-black tracking-tighter cursor-default">STYZEN<span class="text-indigo-500">ID</span></div>
+            <div class="flex items-center gap-5">
+                <button onclick="toggleHistory(true)" class="text-[10px] font-black text-slate-400 hover:text-white tracking-widest uppercase">My History</button>
+                <div class="relative cursor-pointer bg-slate-900 border border-slate-800 p-2.5 rounded-xl" onclick="openCart()">
+                    <i class="fa-solid fa-cart-shopping text-indigo-500"></i>
+                    <span id="cartCount" class="absolute -top-1 -right-1 bg-white text-black text-[9px] px-1.5 rounded-full font-black">0</span>
+                </div>
+                <button onclick="logout()" class="text-slate-600 hover:text-red-500"><i class="fa-solid fa-power-off"></i></button>
+            </div>
+        </nav>
+
+        <main id="productDisplay" class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 pb-20">
+            </main>
+    </div>
+
+    <div id="adminModal" class="modal px-4 overflow-y-auto py-10">
+        <div class="bg-slate-900 border border-indigo-500/30 p-8 rounded-[2.5rem] max-w-lg w-full shadow-2xl my-auto">
+            <h3 class="text-xl font-black mb-6 text-white uppercase tracking-widest flex justify-between">
+                <span>Admin Panel</span>
+                <button onclick="document.getElementById('adminModal').classList.remove('active')" class="text-slate-500"><i class="fa-solid fa-xmark"></i></button>
+            </h3>
+            
+            <div class="space-y-6">
+                <div class="bg-slate-800/50 p-5 rounded-2xl border border-white/5">
+                    <p class="text-[10px] font-bold text-indigo-400 uppercase mb-3 tracking-widest">Manajemen Produk</p>
+                    <div class="space-y-3">
+                        <input type="text" id="adminProdName" placeholder="Nama Produk (Contoh: WISE)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white">
+                        <input type="number" id="adminProdPrice" placeholder="Harga (Contoh: 200000)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white">
+                        <button onclick="saveProduct()" class="w-full py-3 bg-indigo-600 rounded-xl text-[10px] font-bold uppercase tracking-widest">Simpan / Update Produk</button>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/50 p-5 rounded-2xl border border-white/5">
+                    <p class="text-[10px] font-bold text-indigo-400 uppercase mb-3 tracking-widest">Input Stok Akun</p>
+                    <div class="space-y-3">
+                        <select id="adminStockSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white"></select>
+                        <textarea id="adminStockInput" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-[10px] h-24 outline-none font-mono text-white" placeholder="email:pass:2fa (per baris)"></textarea>
+                        <button onclick="addStock()" class="w-full py-3 bg-emerald-600 rounded-xl text-[10px] font-bold uppercase tracking-widest">Tambah ke Gudang</button>
+                    </div>
+                </div>
+
+                <div id="adminProductList" class="space-y-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cartModal" class="modal px-4">
+        <div class="bg-slate-900 border border-slate-800 p-8 rounded-[2.5rem] max-w-sm w-full text-center">
+            <h3 class="text-xl font-bold mb-6 tracking-tighter">Pembayaran Pakasir</h3>
+            <div id="cartItems" class="space-y-2 mb-6 text-left"></div>
+            <div class="bg-white p-4 rounded-2xl mb-6 flex justify-center"><img src="https://files.catbox.moe/s6s5x3.png" class="w-32"></div>
+            <div class="flex justify-between font-black mb-6 text-white text-lg"><span>TOTAL</span><span id="cartTotalText" class="text-indigo-400"></span></div>
+            <div id="payAction">
+                <button onclick="processPakasir()" class="w-full py-4 gradient-btn rounded-2xl font-bold uppercase text-[10px] tracking-widest">Bayar Sekarang</button>
+                <button onclick="closeCart()" class="text-slate-500 text-[10px] font-bold mt-4 uppercase">Batal</button>
+            </div>
+            <div id="loadingPay" class="hidden-section flex flex-col items-center py-6"><div class="loader mb-4"></div><p class="text-[10px] font-bold text-indigo-400 animate-pulse uppercase tracking-widest">Memproses Gateway...</p></div>
+        </div>
+    </div>
+
+    <div id="historyModal" class="modal px-4">
+        <div class="bg-slate-900 border border-slate-800 p-8 rounded-[2.5rem] max-w-md w-full shadow-2xl">
+            <h3 class="text-xl font-black mb-6 uppercase tracking-widest">Riwayat Saya</h3>
+            <div id="historyList" class="space-y-4 max-h-[50vh] overflow-y-auto pr-2"></div>
+            <button onclick="toggleHistory(false)" class="w-full py-4 bg-slate-800 rounded-2xl font-bold mt-8 uppercase text-[10px] tracking-widest">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_CODE = "lhussnach";
+        
+        // --- DATA SYSTEM ---
+        let products = JSON.parse(localStorage.getItem('styzen_products')) || [
+            { name: "WISE", price: 200000 },
+            { name: "CANVA", price: 5000 },
+            { name: "PAYPAL", price: 20000 }
+        ];
+        let globalStocks = JSON.parse(localStorage.getItem('styzen_stocks')) || {};
+        let currentUsername = localStorage.getItem('styzen_active_user') || null;
+        let currentUserData = currentUsername ? JSON.parse(localStorage.getItem(`user_${currentUsername}`)) : null;
+        let cart = [];
+
+        // --- MANAJEMEN PRODUK (ADMIN) ---
+        function renderProducts() {
+            const display = document.getElementById('productDisplay');
+            const stockSelect = document.getElementById('adminStockSelect');
+            const adminList = document.getElementById('adminProductList');
+            
+            display.innerHTML = '';
+            stockSelect.innerHTML = '';
+            adminList.innerHTML = '<p class="text-[10px] font-bold text-slate-500 uppercase mb-2">Daftar Produk Aktif</p>';
+
+            products.forEach(p => {
+                // Tampilan Utama
+                const stockCount = (globalStocks[p.name] || []).length;
+                display.innerHTML += `
+                    <div class="glass-card rounded-[2rem] p-8 border border-white/5 relative group">
+                        <h2 class="text-xl font-bold">${p.name}</h2>
+                        <p class="text-[9px] text-indigo-400 font-black tracking-widest mt-1 uppercase">Stok: ${stockCount}</p>
+                        <p class="text-2xl font-black my-6">Rp ${p.price.toLocaleString()}</p>
+                        <button onclick="addToCart('${p.name}', ${p.price})" class="w-full py-3.5 bg-slate-800 hover:bg-indigo-600 rounded-xl font-bold transition-all">+ Keranjang</button>
+                    </div>`;
+
+                // Tampilan di Admin (Stock Select)
+                stockSelect.innerHTML += `<option value="${p.name}">${p.name}</option>`;
+
+                // Tampilan di Admin (Delete List)
+                adminList.innerHTML += `
+                    <div class="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-white/5">
+                        <span class="text-xs font-bold">${p.name} (Rp ${p.price.toLocaleString()})</span>
+                        <button onclick="deleteProduct('${p.name}')" class="text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+                    </div>`;
+            });
+        }
+
+        function saveProduct() {
+            const name = document.getElementById('adminProdName').value.trim().toUpperCase();
+            const price = parseInt(document.getElementById('adminProdPrice').value);
+            if(!name || !price) return alert("Isi nama dan harga!");
+
+            const index = products.findIndex(p => p.name === name);
+            if(index > -1) {
+                products[index].price = price; // Update Harga
+            } else {
+                products.push({ name, price }); // Tambah Baru
+                if(!globalStocks[name]) globalStocks[name] = [];
+            }
+
+            localStorage.setItem('styzen_products', JSON.stringify(products));
+            localStorage.setItem('styzen_stocks', JSON.stringify(globalStocks));
+            renderProducts();
+            alert("Produk berhasil disimpan!");
+        }
+
+        function deleteProduct(name) {
+            if(confirm(`Hapus produk ${name}?`)) {
+                products = products.filter(p => p.name !== name);
+                localStorage.setItem('styzen_products', JSON.stringify(products));
+                renderProducts();
+            }
+        }
+
+        function addStock() {
+            const p = document.getElementById('adminStockSelect').value;
+            const input = document.getElementById('adminStockInput').value.trim();
+            if(!input) return;
+            const lines = input.split('\n').filter(l => l.includes(':'));
+            if(!globalStocks[p]) globalStocks[p] = [];
+            globalStocks[p] = [...globalStocks[p], ...lines];
+            localStorage.setItem('styzen_stocks', JSON.stringify(globalStocks));
+            document.getElementById('adminStockInput').value = '';
+            renderProducts();
+            alert(`Berhasil tambah ${lines.length} stok ke ${p}`);
+        }
+
+        // --- AUTH & CORE ---
+        function handleAuth(type) {
+            const u = document.getElementById(type === 'login' ? 'userEmail' : 'regUser').value.trim();
+            const p = document.getElementById(type === 'login' ? 'userPass' : 'regPass').value.trim();
+            if(!u || !p) return;
+
+            if(type === 'signup') {
+                if(localStorage.getItem(`user_${u}`)) return alert("User exist!");
+                localStorage.setItem(`user_${u}`, JSON.stringify({ username: u, password: p, history: [] }));
+                alert("Berhasil!"); toggleAuth(false);
+            } else {
+                const stored = localStorage.getItem(`user_${u}`);
+                if(stored) {
+                    const user = JSON.parse(stored);
+                    if(user.password === p) {
+                        currentUsername = u;
+                        currentUserData = user;
+                        localStorage.setItem('styzen_active_user', u);
+                        initApp();
+                    } else alert("Wrong Password!");
+                } else alert("Not found!");
+            }
+        }
+
+        function initApp() {
+            document.getElementById('authSection').classList.add('hidden-section');
+            document.getElementById('mainApp').classList.remove('hidden-section');
+            renderProducts();
+            if(window.location.hash === `#admin/${ADMIN_CODE}`) document.getElementById('adminModal').classList.add('active');
+        }
+
+        function processPakasir() {
+            if(cart.length === 0) return;
+            document.getElementById('payAction').classList.add('hidden-section');
+            document.getElementById('loadingPay').classList.remove('hidden-section');
+            
+            setTimeout(() => {
+                let purchased = [];
+                cart.forEach(item => {
+                    for(let i=0; i<item.qty; i++) {
+                        purchased.push({ product: item.name, data: globalStocks[item.name].shift() || "STOK_KOSONG_HUB_ADMIN" });
+                    }
+                });
+                localStorage.setItem('styzen_stocks', JSON.stringify(globalStocks));
+                currentUserData.history.unshift({ txId: "STZ-"+Date.now(), date: new Date().toLocaleString(), accounts: purchased, total: cart.reduce((a,b)=>a+(b.price*b.qty),0) });
+                localStorage.setItem(`user_${currentUsername}`, JSON.stringify(currentUserData));
+                cart = []; updateCartUI(); renderProducts(); closeCart(); toggleHistory(true);
+            }, 2000);
+        }
+
+        // --- HELPERS ---
+        function toggleAuth(s) {
+            document.getElementById('loginForm').classList.toggle('hidden-section', s);
+            document.getElementById('signupForm').classList.toggle('hidden-section', !s);
+        }
+        function logout() { localStorage.removeItem('styzen_active_user'); location.reload(); }
+        function openCart() { document.getElementById('cartModal').classList.add('active'); }
+        function closeCart() { document.getElementById('cartModal').classList.remove('active'); }
+        function addToCart(n, p) {
+            if((globalStocks[n] || []).length === 0) return alert("Habis!");
+            const i = cart.find(c => c.name === n);
+            if(i) i.qty++; else cart.push({name:n, price:p, qty:1});
+            updateCartUI();
+        }
+        function updateCartUI() {
+            document.getElementById('cartCount').innerText = cart.reduce((a,b)=>a+b.qty,0);
+            document.getElementById('cartTotalText').innerText = "Rp " + cart.reduce((a,b)=>a+(b.price*b.qty),0).toLocaleString();
+            let h = '';
+            cart.forEach(i => h += `<div class="bg-slate-800 p-3 rounded-xl text-xs mb-2 flex justify-between font-bold"><span>${i.name}</span><span>x${i.qty}</span></div>`);
+            document.getElementById('cartItems').innerHTML = h || 'Empty';
+        }
+        function toggleHistory(s) {
+            if(s) {
+                let h = '';
+                currentUserData.history.forEach(x => {
+                    h += `<div class="bg-slate-800 p-5 rounded-[1.5rem] border border-white/5 mb-4">
+                        <div class="flex justify-between text-[8px] text-slate-500 mb-4 font-black uppercase"><span>${x.txId}</span><span>${x.date}</span></div>
+                        ${x.accounts.map(acc => `<div class="bg-slate-950 p-3 rounded-xl border border-indigo-500/20 mb-2"><p class="text-indigo-400 font-black text-[9px] uppercase mb-1">${acc.product}</p><div class="text-white text-[11px] font-mono break-all cursor-pointer" onclick="navigator.clipboard.writeText('${acc.data}');alert('Copied!')">${acc.data}</div></div>`).join('')}
+                    </div>`;
+                });
+                document.getElementById('historyList').innerHTML = h || 'No Transaction';
+            }
+            document.getElementById('historyModal').classList.toggle('active', s);
+        }
+        function adminClick() { (window.c=(window.c||0)+1)>=5?document.getElementById('adminModal').classList.add('active'):null; }
+        window.onload = () => { if(currentUsername) initApp(); };
+    </script>
+</body>
+</html>
