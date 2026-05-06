@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Styzen Store | Verifikasi SN</title>
+    <title>Styzen Store | Wallet System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -40,12 +40,12 @@
         <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100">
             <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
                 <div onclick="adminClick()" class="text-xl font-bold text-blue-600 cursor-pointer">Styzen<span class="text-slate-800">Store</span></div>
-                <div class="flex items-center gap-6">
-                    <button onclick="toggleHistory(true)" class="text-xs font-bold text-slate-600">RIWAYAT</button>
-                    <div class="relative cursor-pointer" onclick="openCart()">
-                        <i class="fa-solid fa-cart-shopping text-slate-700"></i>
-                        <span id="cartCount" class="absolute -top-2 -right-2 bg-blue-600 text-white text-[9px] px-1.5 rounded-full">0</span>
+                <div class="flex items-center gap-4">
+                    <div onclick="openTopup()" class="bg-blue-50 px-3 py-1.5 rounded-full flex items-center gap-2 cursor-pointer border border-blue-100">
+                        <i class="fa-solid fa-wallet text-blue-600 text-xs"></i>
+                        <span id="userBalance" class="text-xs font-bold text-blue-700">Rp 0</span>
                     </div>
+                    <button onclick="toggleHistory(true)" class="text-slate-400 hover:text-blue-600"><i class="fa-solid fa-clock-rotate-left"></i></button>
                     <button onclick="logout()" class="text-slate-400"><i class="fa-solid fa-power-off"></i></button>
                 </div>
             </div>
@@ -56,70 +56,66 @@
 
     <div id="adminModal" class="modal px-4">
         <div class="bg-white p-8 rounded-[2rem] max-w-lg w-full shadow-2xl max-h-[85vh] overflow-y-auto">
-            <h3 class="font-bold mb-6 flex justify-between uppercase text-xs tracking-widest">Admin Control <button onclick="document.getElementById('adminModal').classList.remove('active')">×</button></h3>
-            
+            <h3 class="font-bold mb-6 flex justify-between uppercase text-xs tracking-widest text-slate-400">Admin Panel <button onclick="document.getElementById('adminModal').classList.remove('active')">×</button></h3>
             <div class="space-y-4">
-                <div class="bg-blue-50 p-5 rounded-2xl border border-blue-100">
-                    <p class="text-[10px] font-bold text-blue-600 uppercase mb-3">Verifikasi SN Pembeli</p>
-                    <input type="text" id="adminInputSN" placeholder="Masukkan SN dari struk pembeli" class="w-full p-3 border rounded-xl text-xs mb-2 outline-none focus:border-blue-500">
-                    <button onclick="approveSN()" class="w-full py-3 bg-blue-600 text-white rounded-xl text-xs font-bold">ACC & KIRIM AKUN</button>
+                <div class="bg-blue-600 p-6 rounded-3xl text-white shadow-xl shadow-blue-100">
+                    <p class="text-[10px] font-bold uppercase mb-3 opacity-80 tracking-widest">Top Up Saldo User</p>
+                    <input type="text" id="adminTargetUser" placeholder="Username Pembeli" class="w-full p-3 border-none rounded-xl text-xs mb-2 text-slate-800 outline-none">
+                    <input type="number" id="adminAmount" placeholder="Jumlah Saldo (Rp)" class="w-full p-3 border-none rounded-xl text-xs mb-3 text-slate-800 outline-none">
+                    <button onclick="addBalance()" class="w-full py-3 bg-white text-blue-600 rounded-xl text-xs font-bold uppercase shadow-sm">Kirim Saldo</button>
                 </div>
-
-                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Manajemen Produk</p>
-                    <input type="text" id="adminProdName" placeholder="Nama Produk" class="w-full p-3 border rounded-xl text-sm mb-2">
-                    <input type="number" id="adminProdPrice" placeholder="Harga" class="w-full p-3 border rounded-xl text-sm mb-2">
-                    <button onclick="saveProduct()" class="w-full py-3 bg-slate-800 text-white rounded-xl text-xs font-bold mb-4">UPDATE KATALOG</button>
+                <div class="bg-slate-50 p-5 rounded-3xl border border-slate-200">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-3 tracking-widest">Pengaturan Produk</p>
+                    <input type="text" id="adminProdName" placeholder="Nama Produk" class="w-full p-3 border rounded-xl text-xs mb-2">
+                    <input type="number" id="adminProdPrice" placeholder="Harga" class="w-full p-3 border rounded-xl text-xs mb-3">
+                    <button onclick="saveProduct()" class="w-full py-3 bg-slate-800 text-white rounded-xl text-xs font-bold mb-5">SIMPAN KATALOG</button>
                     
-                    <select id="adminStockSelect" class="w-full p-3 border rounded-xl text-sm mb-2"></select>
-                    <textarea id="adminStockInput" class="w-full p-3 border rounded-xl text-[10px] h-20" placeholder="user:pass (per baris)"></textarea>
-                    <button onclick="addStock()" class="w-full py-3 bg-slate-200 text-slate-700 rounded-xl text-xs font-bold">TAMBAH STOK</button>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Update Stok</p>
+                    <select id="adminStockSelect" class="w-full p-3 border rounded-xl text-xs mb-2"></select>
+                    <textarea id="adminStockInput" class="w-full p-3 border rounded-xl text-[10px] h-20 mb-2" placeholder="Format data per baris"></textarea>
+                    <button onclick="addStock()" class="w-full py-3 bg-blue-100 text-blue-700 rounded-xl text-xs font-bold">UPDATE STOK</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="cartModal" class="modal px-4">
+    <div id="topupModal" class="modal px-4">
         <div class="bg-white p-8 rounded-[2rem] max-w-sm w-full text-center shadow-2xl border border-slate-100">
-            <h3 class="font-bold text-xl mb-4">Pembayaran QRIS</h3>
-            <div id="cartItems" class="space-y-1 mb-4 text-left text-xs text-slate-500"></div>
+            <h3 class="font-bold text-xl mb-2 text-blue-600">Isi Saldo</h3>
+            <p class="text-[10px] text-slate-400 mb-6 font-medium uppercase tracking-tighter">Silakan Scan QRIS Di Bawah Ini</p>
             
-            <div class="bg-slate-50 p-6 rounded-2xl mb-4 border border-dashed border-slate-300">
-                <img src="https://files.catbox.moe/s6s5x3.png" class="w-32 mx-auto">
-                <p class="text-[9px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Gateway Pakasir</p>
+            <div class="bg-white p-4 rounded-3xl mb-6 shadow-inner border border-slate-50">
+                <img src="https://files.catbox.moe/9d3nxh.png" class="w-full max-w-[240px] mx-auto rounded-xl">
             </div>
 
-            <div class="flex justify-between font-bold text-lg mb-6"><span>Total:</span><span id="cartTotalText" class="text-blue-600"></span></div>
+            <div class="text-left bg-blue-50 p-4 rounded-2xl mb-6 border border-blue-100">
+                <p class="text-[10px] text-blue-700 leading-relaxed font-semibold">
+                    1. Transfer sesuai keinginan Anda.<br>
+                    2. Simpan Bukti Transfer/Screenshot.<br>
+                    3. Chat Admin dengan mengirimkan Bukti & Username Anda.
+                </p>
+            </div>
             
-            <div id="payAction">
-                <p class="text-[9px] text-red-500 font-bold mb-4 leading-tight italic">PENTING: Setelah transfer, simpan Nomor Ref/SN yang ada pada struk Anda!</p>
-                <button onclick="showSNInput()" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest">SAYA SUDAH TRANSFER</button>
-                <button onclick="closeCart()" class="text-slate-400 text-[10px] mt-4 block mx-auto font-bold uppercase">Batal</button>
-            </div>
-
-            <div id="snInputSection" class="hidden-section space-y-4">
-                <input type="text" id="buyerSN" placeholder="Masukkan Nomor Ref/SN" class="w-full p-4 border-2 border-blue-50 rounded-2xl text-center font-bold text-blue-600 outline-none focus:border-blue-400">
-                <button onclick="submitSN()" class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold text-xs uppercase">KONFIRMASI SN</button>
-                <p class="text-[9px] text-slate-400 italic leading-tight">Admin akan mencocokkan SN Anda dengan mutasi Pakasir.</p>
-            </div>
+            <a href="https://wa.me/628XXXXXXXXX" target="_blank" class="block w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-blue-100">
+                <i class="fa-brands fa-whatsapp mr-2 text-sm"></i> Konfirmasi ke Admin
+            </a>
+            <button onclick="document.getElementById('topupModal').classList.remove('active')" class="text-slate-400 text-[10px] mt-4 block mx-auto font-bold uppercase hover:text-slate-600">Kembali</button>
         </div>
     </div>
 
     <div id="historyModal" class="modal px-4">
-        <div class="bg-white p-8 rounded-[2rem] max-w-md w-full shadow-2xl border border-slate-100">
-            <h3 class="text-xl font-bold mb-6">Riwayat Belanja</h3>
+        <div class="bg-white p-8 rounded-[2rem] max-w-md w-full shadow-2xl">
+            <h3 class="text-xl font-bold mb-6">Riwayat Akun</h3>
             <div id="historyList" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2"></div>
             <button onclick="toggleHistory(false)" class="w-full py-4 bg-slate-100 text-slate-500 rounded-2xl font-bold mt-6 text-xs uppercase">Tutup</button>
         </div>
     </div>
 
     <script>
-        const ADMIN_CODE = "lhussnach";
         let products = JSON.parse(localStorage.getItem('st_products')) || [{name: "WISE", price: 200000}];
         let globalStocks = JSON.parse(localStorage.getItem('st_stocks')) || {WISE: []};
         let currentUsername = localStorage.getItem('st_active_user') || null;
         let currentUserData = currentUsername ? JSON.parse(localStorage.getItem(`user_${currentUsername}`)) : null;
-        let cart = [];
 
         function renderProducts() {
             const disp = document.getElementById('productDisplay');
@@ -127,90 +123,58 @@
             disp.innerHTML = ''; sel.innerHTML = '';
             products.forEach(p => {
                 const s = (globalStocks[p.name] || []).length;
-                disp.innerHTML += `<div class="product-card p-6 flex flex-col"><h3 class="font-bold text-slate-800">${p.name}</h3><p class="text-[10px] font-bold text-blue-500 mt-1 uppercase">Stok: ${s}</p><p class="text-2xl font-extrabold mt-6 mb-8 text-slate-900">Rp ${p.price.toLocaleString()}</p><button onclick="addToCart('${p.name}', ${p.price})" class="mt-auto w-full py-3 bg-slate-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-xl text-[10px] font-bold transition-all uppercase">Beli</button></div>`;
+                disp.innerHTML += `<div class="product-card p-6 flex flex-col"><h3 class="font-bold text-slate-800">${p.name}</h3><p class="text-[10px] font-bold text-blue-500 mt-1 uppercase">Stok: ${s}</p><p class="text-2xl font-extrabold mt-6 mb-8 text-slate-900">Rp ${p.price.toLocaleString()}</p><button onclick="buyProduct('${p.name}', ${p.price})" class="mt-auto w-full py-4 bg-blue-600 text-white rounded-2xl text-[10px] font-bold transition-all uppercase tracking-widest hover:bg-blue-700 shadow-md">Beli Sekarang</button></div>`;
                 sel.innerHTML += `<option value="${p.name}">${p.name}</option>`;
             });
+            if(currentUserData) document.getElementById('userBalance').innerText = "Rp " + (currentUserData.balance || 0).toLocaleString();
         }
 
-        // --- ALUR VERIFIKASI SN ---
-        function showSNInput() {
-            document.getElementById('payAction').classList.add('hidden-section');
-            document.getElementById('snInputSection').classList.remove('hidden-section');
-        }
+        function buyProduct(name, price) {
+            if((currentUserData.balance || 0) < price) return alert("Saldo tidak cukup! Silakan Top Up.");
+            if((globalStocks[name] || []).length === 0) return alert("Stok sedang kosong!");
 
-        function submitSN() {
-            const sn = document.getElementById('buyerSN').value.trim();
-            if(!sn) return alert("Nomor SN wajib diisi!");
-
-            const order = {
-                id: 'INV-' + Date.now(),
-                sn: sn,
-                date: new Date().toLocaleString(),
-                status: 'PENDING',
-                items: cart.map(i => ({name: i.name, qty: i.qty})),
-                accounts: []
-            };
-
-            currentUserData.history.unshift(order);
-            localStorage.setItem(`user_${currentUsername}`, JSON.stringify(currentUserData));
-
-            // Simpan ke antrean admin global
-            let pending = JSON.parse(localStorage.getItem('st_pending_sn')) || [];
-            pending.push({ user: currentUsername, sn: sn, invId: order.id });
-            localStorage.setItem('st_pending_sn', JSON.stringify(pending));
-
-            alert("SN Terkirim! Mohon tunggu admin memverifikasi pembayaran Anda.");
-            cart = []; updateCartUI(); closeCart(); toggleHistory(true);
-            document.getElementById('buyerSN').value = '';
-        }
-
-        function approveSN() {
-            const sn = document.getElementById('adminInputSN').value.trim();
-            let pending = JSON.parse(localStorage.getItem('st_pending_sn')) || [];
-            const target = pending.find(p => p.sn === sn);
-
-            if(!target) return alert("SN tidak ditemukan di antrean!");
-
-            let buyerData = JSON.parse(localStorage.getItem(`user_${target.user}`));
-            let invIndex = buyerData.history.findIndex(h => h.id === target.invId);
-
-            if(invIndex > -1) {
-                let itemsToDeliver = [];
-                buyerData.history[invIndex].items.forEach(item => {
-                    for(let i=0; i<item.qty; i++) {
-                        itemsToDeliver.push({ name: item.name, data: globalStocks[item.name].shift() || "HUBUNGI ADMIN (STOK HABIS)" });
-                    }
+            if(confirm(`Konfirmasi pembelian ${name}?\nSaldo Anda akan terpotong Rp ${price.toLocaleString()}`)) {
+                currentUserData.balance -= price;
+                const accountData = globalStocks[name].shift();
+                currentUserData.history.unshift({
+                    id: 'TX-' + Date.now(),
+                    date: new Date().toLocaleString(),
+                    product: name,
+                    account: accountData
                 });
-
-                buyerData.history[invIndex].status = 'SUCCESS';
-                buyerData.history[invIndex].accounts = itemsToDeliver;
-
-                localStorage.setItem(`user_${target.user}`, JSON.stringify(buyerData));
+                localStorage.setItem(`user_${currentUsername}`, JSON.stringify(currentUserData));
                 localStorage.setItem('st_stocks', JSON.stringify(globalStocks));
-                
-                pending = pending.filter(p => p.sn !== sn);
-                localStorage.setItem('st_pending_sn', JSON.stringify(pending));
-
-                alert("BERHASIL! Akun telah dikirim ke pembeli.");
-                document.getElementById('adminInputSN').value = '';
+                alert("Berhasil! Akun sudah dikirim ke riwayat.");
                 renderProducts();
             }
         }
 
-        // --- AUTH & CORE ---
+        function addBalance() {
+            const target = document.getElementById('adminTargetUser').value.trim();
+            const amount = parseInt(document.getElementById('adminAmount').value);
+            if(!target || !amount) return alert("Isi username dan jumlah saldo!");
+            let userData = JSON.parse(localStorage.getItem(`user_${target}`));
+            if(!userData) return alert("Username tidak ditemukan!");
+            userData.balance = (userData.balance || 0) + amount;
+            localStorage.setItem(`user_${target}`, JSON.stringify(userData));
+            if(target === currentUsername) { currentUserData = userData; renderProducts(); }
+            alert(`Saldo Rp ${amount.toLocaleString()} berhasil dikirim ke ${target}`);
+            document.getElementById('adminAmount').value = '';
+        }
+
         function handleAuth(type) {
             const u = document.getElementById(type==='login'?'userEmail':'regUser').value.trim();
             const p = document.getElementById(type==='login'?'userPass':'regPass').value.trim();
             if(!u || !p) return;
             if(type==='signup') {
-                localStorage.setItem(`user_${u}`, JSON.stringify({username:u, password:p, history:[]}));
-                alert("Berhasil Daftar!"); toggleAuth(false);
+                localStorage.setItem(`user_${u}`, JSON.stringify({username:u, password:p, balance:0, history:[]}));
+                alert("Akun berhasil dibuat!"); toggleAuth(false);
             } else {
                 const d = JSON.parse(localStorage.getItem(`user_${u}`));
                 if(d && d.password === p) {
                     currentUsername = u; currentUserData = d;
                     localStorage.setItem('st_active_user', u); initApp();
-                } else alert("Gagal Login!");
+                } else alert("Username atau Password salah!");
             }
         }
 
@@ -218,29 +182,21 @@
             document.getElementById('authSection').classList.add('hidden-section');
             document.getElementById('mainApp').classList.remove('hidden-section');
             renderProducts();
-            if(window.location.hash.includes('admin')) document.getElementById('adminModal').classList.add('active');
         }
 
         function toggleHistory(s) {
             if(s) {
                 let h = '';
                 currentUserData.history.forEach(x => {
-                    const isPending = x.status === 'PENDING';
-                    h += `<div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 mb-3">
-                        <div class="flex justify-between items-center mb-3">
-                            <span class="text-[9px] font-bold text-slate-400">${x.id}</span>
-                            <span class="text-[9px] font-extrabold ${isPending ? 'text-amber-500' : 'text-emerald-500'} bg-white px-2 py-1 rounded border">${x.status}</span>
+                    h += `<div class="bg-slate-50 p-5 rounded-3xl border border-slate-100 mb-4 shadow-sm">
+                        <div class="flex justify-between mb-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest"><span>${x.id}</span><span>${x.date}</span></div>
+                        <div class="bg-white p-4 rounded-2xl border border-blue-50">
+                            <p class="text-[9px] font-extrabold text-blue-600 uppercase mb-2 tracking-tighter">${x.product}</p>
+                            <code class="text-[10px] block break-all font-mono select-all cursor-pointer bg-slate-50 p-2 rounded-lg" onclick="navigator.clipboard.writeText('${x.account}');alert('Berhasil Copy!')">${x.account}</code>
                         </div>
-                        ${isPending ? 
-                            `<p class="text-[10px] text-slate-500 font-medium">Menunggu Verifikasi SN: <span class="text-blue-600 font-bold">${x.sn}</span></p>` : 
-                            x.accounts.map(a => `<div class="bg-white p-3 rounded-xl border border-blue-50 mb-2">
-                                <p class="text-[9px] font-bold text-blue-600 uppercase mb-1">${a.name}</p>
-                                <code class="text-[10px] block break-all font-mono select-all cursor-pointer" onclick="navigator.clipboard.writeText('${a.data}');alert('Copied!')">${a.data}</code>
-                            </div>`).join('')
-                        }
                     </div>`;
                 });
-                document.getElementById('historyList').innerHTML = h || '<p class="text-center text-slate-400 text-xs">Belum ada riwayat belanja.</p>';
+                document.getElementById('historyList').innerHTML = h || '<p class="text-center text-slate-400 text-xs py-10">Belum ada transaksi.</p>';
             }
             document.getElementById('historyModal').classList.toggle('active', s);
         }
@@ -248,46 +204,29 @@
         function saveProduct() {
             const n = document.getElementById('adminProdName').value.toUpperCase();
             const p = parseInt(document.getElementById('adminProdPrice').value);
-            if(!n || !p) return;
+            if(!n || !p) return alert("Isi nama dan harga produk!");
             const idx = products.findIndex(x=>x.name===n);
             if(idx>-1) products[idx].price = p; else products.push({name:n, price:p});
             if(!globalStocks[n]) globalStocks[n] = [];
             localStorage.setItem('st_products', JSON.stringify(products));
-            renderProducts(); alert("Katalog Terupdate!");
+            renderProducts(); alert("Produk diperbarui!");
         }
 
         function addStock() {
             const p = document.getElementById('adminStockSelect').value;
             const val = document.getElementById('adminStockInput').value.trim();
-            if(!val) return;
-            const lines = val.split('\n');
-            globalStocks[p] = [...(globalStocks[p]||[]), ...lines];
+            if(!val) return alert("Isi data stok!");
+            globalStocks[p] = [...(globalStocks[p]||[]), ...val.split('\n')];
             localStorage.setItem('st_stocks', JSON.stringify(globalStocks));
             document.getElementById('adminStockInput').value = '';
-            renderProducts(); alert("Stok Berhasil Masuk!");
+            renderProducts(); alert("Stok berhasil ditambahkan!");
         }
 
+        function openTopup() { document.getElementById('topupModal').classList.add('active'); }
         function logout() { localStorage.removeItem('st_active_user'); location.reload(); }
         function toggleAuth(s) { document.getElementById('loginForm').classList.toggle('hidden-section', s); document.getElementById('signupForm').classList.toggle('hidden-section', !s); }
-        function openCart() { 
-            document.getElementById('payAction').classList.remove('hidden-section'); 
-            document.getElementById('snInputSection').classList.add('hidden-section'); 
-            document.getElementById('cartModal').classList.add('active'); 
-        }
-        function closeCart() { document.getElementById('cartModal').classList.remove('active'); }
-        function addToCart(n,p) { 
-            if((globalStocks[n]||[]).length===0) return alert('Stok kosong!');
-            const i = cart.find(x=>x.name===n); if(i) i.qty++; else cart.push({name:n, price:p, qty:1}); updateCartUI(); 
-        }
-        function updateCartUI() {
-            document.getElementById('cartCount').innerText = cart.reduce((a,b)=>a+b.qty,0);
-            document.getElementById('cartTotalText').innerText = "Rp " + cart.reduce((a,b)=>a+(b.price*b.qty),0).toLocaleString();
-            let h = ''; cart.forEach(i=>h+=`<div class="text-[10px] font-bold text-slate-500">${i.name} x${i.qty}</div>`);
-            document.getElementById('cartItems').innerHTML = h;
-        }
         function adminClick() { (window.c=(window.c||0)+1)>=5?document.getElementById('adminModal').classList.add('active'):null; }
         window.onload = () => { if(currentUsername) initApp(); };
     </script>
 </body>
-            </html>
-                        
+</html>
