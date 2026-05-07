@@ -3,230 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Styzen Store | Wallet System</title>
+    <title>StyzenID | Digital Product</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
-        body { background-color: #f8fafc; color: #1e293b; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .product-card { background: white; border: 1px solid #e2e8f0; border-radius: 20px; transition: all 0.3s; }
-        .product-card:hover { border-color: #3b82f6; transform: translateY(-4px); box-shadow: 0 12px 24px rgba(59, 130, 246, 0.1); }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { background-color: #f8fafc; color: #0f172a; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-nav { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border-bottom: 1px solid #e2e8f0; }
+        .admin-sidebar-btn.active { background: #2563eb; color: white; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); }
+        .tab-content, .admin-sub-tab { display: none; }
+        .active { display: block !important; }
+        .hidden-section { display: none !important; }
+        .product-card { background: white; border-radius: 2rem; border: 1px solid #f1f5f9; transition: all 0.3s; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); border-color: #3b82f6; }
         .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal.active { display: flex; }
-        .hidden-section { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="authSection" class="fixed inset-0 z-[200] bg-white flex items-center justify-center p-6">
-        <div class="bg-white p-8 rounded-[2rem] max-w-sm w-full text-center border border-slate-100 shadow-2xl">
-            <h2 class="text-2xl font-extrabold text-blue-600 mb-2">Styzen<span class="text-slate-800">Store</span></h2>
-            <div id="loginForm" class="space-y-4 mt-6">
-                <input type="text" id="userEmail" placeholder="Username" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500">
-                <input type="password" id="userPass" placeholder="Password" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500">
-                <button onclick="handleAuth('login')" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold">Masuk</button>
-                <p class="text-[11px] text-slate-500 mt-4">Belum punya akun? <span class="text-blue-600 font-bold cursor-pointer" onclick="toggleAuth(true)">Daftar</span></p>
+    <script>
+      // Konfigurasi Firebase milikmu
+      const firebaseConfig = {
+        apiKey: "AIzaSyDS5JjgqG03qAujVRYMBkZde0SBFumWhq8",
+        authDomain: "styzenstore-9c0f9.firebaseapp.com",
+        databaseURL: "https://styzenstore-9c0f9-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "styzenstore-9c0f9",
+        storageBucket: "styzenstore-9c0f9.firebasestorage.app",
+        messagingSenderId: "368732944579",
+        appId: "1:368732944579:web:f43ecd278f369aca0a8a76",
+        measurementId: "G-10P7Q9H0HS"
+      };
+      
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.database();
+    </script>
+
+    <div id="authSection" class="fixed inset-0 z-[1000] bg-white flex items-center justify-center p-6">
+        <div class="max-w-sm w-full text-center">
+            <div class="w-20 h-20 bg-blue-600 rounded-3xl mx-auto mb-6 flex items-center justify-center text-white text-3xl shadow-2xl shadow-blue-200">
+                <i class="fa-solid fa-store"></i>
             </div>
-            <div id="signupForm" class="space-y-4 mt-6 hidden-section">
-                <input type="text" id="regUser" placeholder="Buat Username" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
-                <input type="password" id="regPass" placeholder="Buat Password" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
-                <button onclick="handleAuth('signup')" class="w-full py-3 bg-slate-800 text-white rounded-xl font-bold">Buat Akun</button>
-                <p class="text-[11px] text-slate-500 mt-4">Sudah punya akun? <span class="text-blue-600 font-bold cursor-pointer" onclick="toggleAuth(false)">Login</span></p>
+            <h2 class="text-3xl font-black text-slate-900 mb-2">Styzen<span class="text-blue-600">ID</span></h2>
+            <p class="text-slate-400 text-sm mb-10 font-medium">Automatic Cloud Store Platform</p>
+            
+            <div id="loginForm" class="space-y-4">
+                <input type="text" id="userEmail" placeholder="Username" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-blue-600 transition-all">
+                <input type="password" id="userPass" placeholder="Password" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-blue-600 transition-all">
+                <button onclick="handleAuth('login')" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-lg shadow-blue-100 hover:scale-[1.02] active:scale-95 transition-all">Sign In</button>
+                <p class="text-xs text-slate-500 mt-6">Baru di sini? <span class="text-blue-600 font-bold cursor-pointer" onclick="toggleAuth(true)">Buat Akun</span></p>
+            </div>
+
+            <div id="signupForm" class="space-y-4 hidden-section">
+                <input type="text" id="regUser" placeholder="Buat Username" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4">
+                <input type="password" id="regPass" placeholder="Buat Password" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4">
+                <button onclick="handleAuth('signup')" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold">Register Now</button>
+                <p class="text-xs text-slate-500 mt-6">Sudah punya akun? <span class="text-blue-600 font-bold cursor-pointer" onclick="toggleAuth(false)">Login</span></p>
             </div>
         </div>
     </div>
 
-    <div id="mainApp" class="hidden-section">
-        <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100">
-            <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-                <div onclick="adminClick()" class="text-xl font-bold text-blue-600 cursor-pointer">Styzen<span class="text-slate-800">Store</span></div>
-                <div class="flex items-center gap-4">
-                    <div onclick="openTopup()" class="bg-blue-50 px-3 py-1.5 rounded-full flex items-center gap-2 cursor-pointer border border-blue-100">
-                        <i class="fa-solid fa-wallet text-blue-600 text-xs"></i>
-                        <span id="userBalance" class="text-xs font-bold text-blue-700">Rp 0</span>
+    <div id="mainApp" class="hidden-section min-h-screen pb-32">
+        <nav class="glass-nav sticky top-0 z-50 px-6 py-4">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="font-black text-xl tracking-tight">Styzen<span class="text-blue-600">ID</span></div>
+                <div class="flex items-center gap-3">
+                    <div onclick="openTopup()" class="bg-blue-600 px-4 py-2 rounded-full flex items-center gap-2 cursor-pointer shadow-lg shadow-blue-100">
+                        <i class="fa-solid fa-wallet text-white text-[10px]"></i>
+                        <span id="userBalance" class="text-xs font-bold text-white">Rp 0</span>
                     </div>
-                    <button onclick="toggleHistory(true)" class="text-slate-400 hover:text-blue-600"><i class="fa-solid fa-clock-rotate-left"></i></button>
-                    <button onclick="logout()" class="text-slate-400"><i class="fa-solid fa-power-off"></i></button>
+                    <button onclick="logout()" class="text-slate-300 hover:text-red-500 transition-colors"><i class="fa-solid fa-power-off"></i></button>
                 </div>
             </div>
         </nav>
 
-        <main id="productDisplay" class="max-w-6xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-10"></main>
-    </div>
+        <div class="max-w-7xl mx-auto p-6">
+            <section id="tab-store" class="tab-content active">
+                <div class="mb-10">
+                    <h1 class="text-3xl font-black text-slate-900">Marketplace</h1>
+                    <p class="text-slate-400 text-sm">Produk digital siap kirim secara instan.</p>
+                </div>
+                <div id="productDisplay" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+            </section>
 
-    <div id="adminModal" class="modal px-4">
-        <div class="bg-white p-8 rounded-[2rem] max-w-lg w-full shadow-2xl max-h-[85vh] overflow-y-auto">
-            <h3 class="font-bold mb-6 flex justify-between uppercase text-xs tracking-widest text-slate-400">Admin Panel <button onclick="document.getElementById('adminModal').classList.remove('active')">×</button></h3>
-            <div class="space-y-4">
-                <div class="bg-blue-600 p-6 rounded-3xl text-white shadow-xl shadow-blue-100">
-                    <p class="text-[10px] font-bold uppercase mb-3 opacity-80 tracking-widest">Top Up Saldo User</p>
-                    <input type="text" id="adminTargetUser" placeholder="Username Pembeli" class="w-full p-3 border-none rounded-xl text-xs mb-2 text-slate-800 outline-none">
-                    <input type="number" id="adminAmount" placeholder="Jumlah Saldo (Rp)" class="w-full p-3 border-none rounded-xl text-xs mb-3 text-slate-800 outline-none">
-                    <button onclick="addBalance()" class="w-full py-3 bg-white text-blue-600 rounded-xl text-xs font-bold uppercase shadow-sm">Kirim Saldo</button>
+            <section id="tab-history" class="tab-content">
+                <div class="mb-10">
+                    <h1 class="text-3xl font-black text-slate-900">My Orders</h1>
+                    <p class="text-slate-400 text-sm">Akses semua akun yang telah kamu beli.</p>
                 </div>
-                <div class="bg-slate-50 p-5 rounded-3xl border border-slate-200">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-3 tracking-widest">Pengaturan Produk</p>
-                    <input type="text" id="adminProdName" placeholder="Nama Produk" class="w-full p-3 border rounded-xl text-xs mb-2">
-                    <input type="number" id="adminProdPrice" placeholder="Harga" class="w-full p-3 border rounded-xl text-xs mb-3">
-                    <button onclick="saveProduct()" class="w-full py-3 bg-slate-800 text-white rounded-xl text-xs font-bold mb-5">SIMPAN KATALOG</button>
-                    
-                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Update Stok</p>
-                    <select id="adminStockSelect" class="w-full p-3 border rounded-xl text-xs mb-2"></select>
-                    <textarea id="adminStockInput" class="w-full p-3 border rounded-xl text-[10px] h-20 mb-2" placeholder="Format data per baris"></textarea>
-                    <button onclick="addStock()" class="w-full py-3 bg-blue-100 text-blue-700 rounded-xl text-xs font-bold">UPDATE STOK</button>
+                <div id="historyList" class="grid gap-4 max-w-2xl"></div>
+            </section>
+
+            <section id="tab-admin" class="tab-content">
+                <div id="adminLoginBlock" class="max-w-sm mx-auto mt-20 text-center bg-white p-10 rounded-[3rem] shadow-sm border border-slate-100">
+                    <i class="fa-solid fa-fingerprint text-4xl text-blue-600 mb-6"></i>
+                    <h2 class="font-bold text-xl mb-8">Admin Authentication</h2>
+                    <input type="password" id="adminPassField" placeholder="Admin Password" class="w-full p-4 bg-slate-50 rounded-2xl mb-4 outline-none text-center focus:ring-2 focus:ring-blue-600">
+                    <button onclick="verifyAdminLogin()" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold uppercase tracking-widest text-xs">Access Panel</button>
                 </div>
-            </div>
+
+                <div id="adminPanelBlock" class="hidden-section flex flex-col lg:flex-row gap-8">
+                    <aside class="lg:w-64 flex flex-col gap-2">
+                        <button onclick="switchAdminSubTab('dashboard')" id="as-dashboard" class="admin-sidebar-btn active p-4 rounded-2xl text-left text-xs font-bold flex items-center gap-3 transition-all"><i class="fa-solid fa-chart-line w-4"></i> Dashboard</button>
+                        <button onclick="switchAdminSubTab('produk')" id="as-produk" class="admin-sidebar-btn p-4 rounded-2xl text-left text-xs font-bold flex items-center gap-3 text-slate-400 transition-all"><i class="fa-solid fa-box w-4"></i> Produk & Stok</button>
+                        <button onclick="switchAdminSubTab('users')" id="as-users" class="admin-sidebar-btn p-4 rounded-2xl text-left text-xs font-bold flex items-center gap-3 text-slate-400 transition-all"><i class="fa-solid fa-user-pen w-4"></i> Kelola Saldo</button>
+                        <button onclick="switchAdminSubTab('finance')" id="as-finance" class="admin-sidebar-btn p-4 rounded-2xl text-left text-xs font-bold flex items-center gap-3 text-slate-400 transition-all"><i class="fa-solid fa-receipt w-4"></i> Keuangan</button>
+                    </aside>
+
+                    <div class="flex-1 bg-white p-8 rounded-[2.5rem] border border-slate-100 min-h-[500px]">
+                        <div id="adm-dashboard" class="admin-sub-tab active">
+                            <h3 class="font-black text-xl mb-8">Business Stats</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
+                                <div class="p-6 bg-slate-50 rounded-3xl"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Omset</p><h4 id="stat-sales" class="text-xl font-black">Rp 0</h4></div>
+                                <div class="p-6 bg-slate-50 rounded-3xl"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Users</p><h4 id="stat-users" class="text-xl font-black">0</h4></div>
+                                <div class="p-6 bg-blue-50 rounded-3xl"><p class="text-[10px] font-bold text-blue-600 uppercase mb-1">Laba (90%)</p><h4 id="stat-profit" class="text-xl font-black text-blue-700">Rp 0</h4></div>
+                            </div>
+                            <h4 class="font-bold text-xs mb-4 uppercase text-slate-400">Recent Transactions</h4>
+                            <div id="adminTxLog" class="space-y-2"></div>
+                        </div>
+
+                        <div id="adm-produk" class="admin-sub-tab">
+                            <h3 class="font-black text-xl mb-8">Inventory</h3>
+                            <div class="grid md:grid-cols-2 gap-8">
+                                <div class="space-y-3">
+                                    <p class="text-[10px] font-bold text-blue-600 uppercase">Master Produk</p>
+                                    <input type="text" id="adminProdName" placeholder="Nama Produk" class="w-full p-4 bg-slate-50 rounded-2xl text-sm border-none outline-none">
+                                    <input type="number" id="adminProdPrice" placeholder="Harga Jual" class="w-full p-4 bg-slate-50 rounded-2xl text-sm border-none outline-none">
+                                    <button onclick="saveProduct()" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-[10px] uppercase tracking-widest">Update Katalog</button>
+                                </div>
+                                <div class="space-y-3">
+                                    <p class="text-[10px] font-bold text-blue-600 uppercase">Injeksi Akun</p>
+                                    <select id="adminStockSelect" class="w-full p-4 bg-slate-50 rounded-2xl text-sm border-none outline-none"></select>
+                                    <textarea id="adminStockInput" placeholder="Data per baris..." class="w-full p-4 bg-slate-50 rounded-2xl text-[10px] h-32 border-none outline-none"></textarea>
+                                    <button onclick="addStock()" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-[10px] uppercase tracking-widest">Injeksi Sekarang</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="adm-users" class="admin-sub-tab">
+                            <h3 class="font-black text-xl mb-8">Balance Control</h3>
+                            <div class="bg-slate-900 p-8 rounded-[2.5rem] text-white mb-8">
+                                <div class="grid grid-cols-2 gap-4 mb-6">
+                                    <input type="text" id="adminTargetUser" placeholder="Username" class="bg-white/10 p-4 rounded-2xl text-sm outline-none border border-white/5">
+                                    <input type="number" id="adminAmount" placeholder="Amount" class="bg-white/10 p-4 rounded-2xl text-sm outline-none border border-white/5">
+                                </div>
+                                <div class="flex gap-4">
+                                    <button onclick="modifyBalance('add')" class="flex-1 py-4 bg-blue-600 rounded-2xl font-bold text-[10px] uppercase">Add Balance</button>
+                                    <button onclick="modifyBalance('reduce')" class="flex-1 py-4 bg-red-600 rounded-2xl font-bold text-[10px] uppercase">Remove Balance</button>
+                                </div>
+                            </div>
+                            <div id="adminUserList" class="space-y-2"></div>
+                        </div>
+
+                        <div id="adm-finance" class="admin-sub-tab">
+                            <h3 class="font-black text-xl mb-8">Cash Flow</h3>
+                            <div id="financeLog" class="space-y-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white/90 backdrop-blur-xl border border-slate-100 rounded-[2.5rem] shadow-2xl p-2 flex justify-around items-center z-50">
+            <button onclick="switchTab('store')" id="btn-store" class="nav-btn active flex-1 py-4 rounded-[2rem] text-[10px] font-black uppercase flex flex-col items-center gap-1 transition-all">
+                <i class="fa-solid fa-house"></i><span>Home</span>
+            </button>
+            <button onclick="switchTab('history')" id="btn-history" class="nav-btn flex-1 py-4 rounded-[2rem] text-[10px] font-black uppercase flex flex-col items-center gap-1 text-slate-300 transition-all">
+                <i class="fa-solid fa-box-open"></i><span>Orders</span>
+            </button>
+            <button onclick="switchTab('admin')" id="btn-admin" class="nav-btn flex-1 py-4 rounded-[2rem] text-[10px] font-black uppercase flex flex-col items-center gap-1 text-slate-300 transition-all">
+                <i class="fa-solid fa-lock"></i><span>Admin</span>
+            </button>
         </div>
     </div>
 
     <div id="topupModal" class="modal px-4">
-        <div class="bg-white p-8 rounded-[2rem] max-w-sm w-full text-center shadow-2xl border border-slate-100">
-            <h3 class="font-bold text-xl mb-2 text-blue-600">Isi Saldo</h3>
-            <p class="text-[10px] text-slate-400 mb-6 font-medium uppercase tracking-tighter">Silakan Scan QRIS Di Bawah Ini</p>
-            
-            <div class="bg-white p-4 rounded-3xl mb-6 shadow-inner border border-slate-50">
-                <img src="https://files.catbox.moe/9d3nxh.png" class="w-full max-w-[240px] mx-auto rounded-xl">
+        <div class="bg-white p-10 rounded-[3rem] max-w-sm w-full text-center shadow-2xl">
+            <h3 class="font-black text-2xl mb-8">Top Up</h3>
+            <div class="bg-slate-50 p-6 rounded-[2rem] mb-8">
+                <img src="https://files.catbox.moe/9d3nxh.png" class="w-full rounded-2xl shadow-sm">
             </div>
-
-            <div class="text-left bg-blue-50 p-4 rounded-2xl mb-6 border border-blue-100">
-                <p class="text-[10px] text-blue-700 leading-relaxed font-semibold">
-                    1. Transfer sesuai keinginan Anda.<br>
-                    2. Simpan Bukti Transfer/Screenshot.<br>
-                    3. Chat Admin dengan mengirimkan Bukti & Username Anda.
-                </p>
-            </div>
-            
-            <a href="https://wa.me/628XXXXXXXXX" target="_blank" class="block w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-blue-100">
-                <i class="fa-brands fa-whatsapp mr-2 text-sm"></i> Konfirmasi ke Admin
-            </a>
-            <button onclick="document.getElementById('topupModal').classList.remove('active')" class="text-slate-400 text-[10px] mt-4 block mx-auto font-bold uppercase hover:text-slate-600">Kembali</button>
-        </div>
-    </div>
-
-    <div id="historyModal" class="modal px-4">
-        <div class="bg-white p-8 rounded-[2rem] max-w-md w-full shadow-2xl">
-            <h3 class="text-xl font-bold mb-6">Riwayat Akun</h3>
-            <div id="historyList" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2"></div>
-            <button onclick="toggleHistory(false)" class="w-full py-4 bg-slate-100 text-slate-500 rounded-2xl font-bold mt-6 text-xs uppercase">Tutup</button>
+            <a href="https://wa.me/628XXXXXXXX" target="_blank" class="block w-full py-5 bg-emerald-500 text-white rounded-3xl font-black text-xs uppercase tracking-widest shadow-lg">Confirm via WhatsApp</a>
+            <button onclick="document.getElementById('topupModal').classList.remove('active')" class="text-slate-300 text-[10px] mt-8 font-bold uppercase">Close</button>
         </div>
     </div>
 
     <script>
-        let products = JSON.parse(localStorage.getItem('st_products')) || [{name: "WISE", price: 200000}];
-        let globalStocks = JSON.parse(localStorage.getItem('st_stocks')) || {WISE: []};
+        const ADMIN_PASS = "JunzzXD23@@";
         let currentUsername = localStorage.getItem('st_active_user') || null;
-        let currentUserData = currentUsername ? JSON.parse(localStorage.getItem(`user_${currentUsername}`)) : null;
 
-        function renderProducts() {
+        async function handleAuth(type) {
+            const u = document.getElementById(type==='login'?'userEmail':'regUser').value.trim().toLowerCase();
+            const p = document.getElementById(type==='login'?'userPass':'regPass').value.trim();
+            if(!u || !p) return alert("Isi semua bidang!");
+            const ref = db.ref('users/' + u);
+            const snap = await ref.once('value');
+            if(type === 'signup') {
+                if(snap.exists()) return alert("Username sudah terdaftar!");
+                await ref.set({ username: u, password: p, balance: 0, history: [] });
+                alert("Berhasil Daftar!"); toggleAuth(false);
+            } else {
+                if(snap.exists() && snap.val().password === p) {
+                    currentUsername = u; localStorage.setItem('st_active_user', u); initApp();
+                } else alert("Login Gagal!");
+            }
+        }
+
+        function switchTab(t) {
+            document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(x => { x.classList.remove('active', 'text-blue-600', 'bg-blue-50'); x.classList.add('text-slate-300'); });
+            document.getElementById('tab-'+t).classList.add('active');
+            document.getElementById('btn-'+t).classList.add('active', 'text-blue-600', 'bg-blue-50');
+            if(t==='history') renderHistory();
+            if(t==='store') renderProducts();
+        }
+
+        function switchAdminSubTab(s) {
+            document.querySelectorAll('.admin-sub-tab').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.admin-sidebar-btn').forEach(x => x.classList.remove('active'));
+            document.getElementById('adm-'+s).classList.add('active');
+            document.getElementById('as-'+s).classList.add('active');
+            updateAdminStats();
+        }
+
+        function verifyAdminLogin() {
+            if(document.getElementById('adminPassField').value === ADMIN_PASS) {
+                document.getElementById('adminLoginBlock').classList.add('hidden-section');
+                document.getElementById('adminPanelBlock').classList.remove('hidden-section');
+                updateAdminStats();
+            } else alert("Password Salah!");
+        }
+
+        async function renderProducts() {
+            const pSnap = await db.ref('products').once('value');
+            const sSnap = await db.ref('stocks').once('value');
+            const prods = pSnap.val() || [];
+            const stocks = sSnap.val() || {};
             const disp = document.getElementById('productDisplay');
             const sel = document.getElementById('adminStockSelect');
             disp.innerHTML = ''; sel.innerHTML = '';
-            products.forEach(p => {
-                const s = (globalStocks[p.name] || []).length;
-                disp.innerHTML += `<div class="product-card p-6 flex flex-col"><h3 class="font-bold text-slate-800">${p.name}</h3><p class="text-[10px] font-bold text-blue-500 mt-1 uppercase">Stok: ${s}</p><p class="text-2xl font-extrabold mt-6 mb-8 text-slate-900">Rp ${p.price.toLocaleString()}</p><button onclick="buyProduct('${p.name}', ${p.price})" class="mt-auto w-full py-4 bg-blue-600 text-white rounded-2xl text-[10px] font-bold transition-all uppercase tracking-widest hover:bg-blue-700 shadow-md">Beli Sekarang</button></div>`;
+            prods.forEach(p => {
+                const count = (stocks[p.name] || []).length;
+                disp.innerHTML += `<div class="product-card p-8 flex flex-col">
+                    <div class="flex justify-between items-center mb-10"><span class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center font-bold">${p.name[0]}</span><span class="text-[10px] font-bold ${count>0?'text-emerald-500':'text-red-500'} uppercase">Stock: ${count}</span></div>
+                    <h3 class="font-black text-lg text-slate-800">${p.name}</h3>
+                    <p class="text-2xl font-black mt-8 mb-8 text-slate-900">Rp ${parseInt(p.price).toLocaleString()}</p>
+                    <button onclick="buyProduct('${p.name}', ${p.price})" class="mt-auto w-full py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-slate-100 transition-all hover:bg-blue-600">Buy Now</button>
+                </div>`;
                 sel.innerHTML += `<option value="${p.name}">${p.name}</option>`;
             });
-            if(currentUserData) document.getElementById('userBalance').innerText = "Rp " + (currentUserData.balance || 0).toLocaleString();
+            const u = await db.ref('users/'+currentUsername).once('value');
+            document.getElementById('userBalance').innerText = "Rp " + (u.val().balance || 0).toLocaleString();
         }
 
-        function buyProduct(name, price) {
-            if((currentUserData.balance || 0) < price) return alert("Saldo tidak cukup! Silakan Top Up.");
-            if((globalStocks[name] || []).length === 0) return alert("Stok sedang kosong!");
-
-            if(confirm(`Konfirmasi pembelian ${name}?\nSaldo Anda akan terpotong Rp ${price.toLocaleString()}`)) {
-                currentUserData.balance -= price;
-                const accountData = globalStocks[name].shift();
-                currentUserData.history.unshift({
-                    id: 'TX-' + Date.now(),
-                    date: new Date().toLocaleString(),
-                    product: name,
-                    account: accountData
-                });
-                localStorage.setItem(`user_${currentUsername}`, JSON.stringify(currentUserData));
-                localStorage.setItem('st_stocks', JSON.stringify(globalStocks));
-                alert("Berhasil! Akun sudah dikirim ke riwayat.");
-                renderProducts();
-            }
-        }
-
-        function addBalance() {
-            const target = document.getElementById('adminTargetUser').value.trim();
-            const amount = parseInt(document.getElementById('adminAmount').value);
-            if(!target || !amount) return alert("Isi username dan jumlah saldo!");
-            let userData = JSON.parse(localStorage.getItem(`user_${target}`));
-            if(!userData) return alert("Username tidak ditemukan!");
-            userData.balance = (userData.balance || 0) + amount;
-            localStorage.setItem(`user_${target}`, JSON.stringify(userData));
-            if(target === currentUsername) { currentUserData = userData; renderProducts(); }
-            alert(`Saldo Rp ${amount.toLocaleString()} berhasil dikirim ke ${target}`);
-            document.getElementById('adminAmount').value = '';
-        }
-
-        function handleAuth(type) {
-            const u = document.getElementById(type==='login'?'userEmail':'regUser').value.trim();
-            const p = document.getElementById(type==='login'?'userPass':'regPass').value.trim();
-            if(!u || !p) return;
-            if(type==='signup') {
-                localStorage.setItem(`user_${u}`, JSON.stringify({username:u, password:p, balance:0, history:[]}));
-                alert("Akun berhasil dibuat!"); toggleAuth(false);
-            } else {
-                const d = JSON.parse(localStorage.getItem(`user_${u}`));
-                if(d && d.password === p) {
-                    currentUsername = u; currentUserData = d;
-                    localStorage.setItem('st_active_user', u); initApp();
-                } else alert("Username atau Password salah!");
-            }
-        }
-
-        function initApp() {
-            document.getElementById('authSection').classList.add('hidden-section');
-            document.getElementById('mainApp').classList.remove('hidden-section');
-            renderProducts();
-        }
-
-        function toggleHistory(s) {
-            if(s) {
-                let h = '';
-                currentUserData.history.forEach(x => {
-                    h += `<div class="bg-slate-50 p-5 rounded-3xl border border-slate-100 mb-4 shadow-sm">
-                        <div class="flex justify-between mb-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest"><span>${x.id}</span><span>${x.date}</span></div>
-                        <div class="bg-white p-4 rounded-2xl border border-blue-50">
-                            <p class="text-[9px] font-extrabold text-blue-600 uppercase mb-2 tracking-tighter">${x.product}</p>
-                            <code class="text-[10px] block break-all font-mono select-all cursor-pointer bg-slate-50 p-2 rounded-lg" onclick="navigator.clipboard.writeText('${x.account}');alert('Berhasil Copy!')">${x.account}</code>
-                        </div>
-                    </div>`;
-                });
-                document.getElementById('historyList').innerHTML = h || '<p class="text-center text-slate-400 text-xs py-10">Belum ada transaksi.</p>';
-            }
-            document.getElementById('historyModal').classList.toggle('active', s);
-        }
-
-        function saveProduct() {
-            const n = document.getElementById('adminProdName').value.toUpperCase();
-            const p = parseInt(document.getElementById('adminProdPrice').value);
-            if(!n || !p) return alert("Isi nama dan harga produk!");
-            const idx = products.findIndex(x=>x.name===n);
-            if(idx>-1) products[idx].price = p; else products.push({name:n, price:p});
-            if(!globalStocks[n]) globalStocks[n] = [];
-            localStorage.setItem('st_products', JSON.stringify(products));
-            renderProducts(); alert("Produk diperbarui!");
-        }
-
-        function addStock() {
-            const p = document.getElementById('adminStockSelect').value;
-            const val = document.getElementById('adminStockInput').value.trim();
-            if(!val) return alert("Isi data stok!");
-            globalStocks[p] = [...(globalStocks[p]||[]), ...val.split('\n')];
-            localStorage.setItem('st_stocks', JSON.stringify(globalStocks));
-            document.getElementById('adminStockInput').value = '';
-            renderProducts(); alert("Stok berhasil ditambahkan!");
-        }
-
-        function openTopup() { document.getElementById('topupModal').classList.add('active'); }
-        function logout() { localStorage.removeItem('st_active_user'); location.reload(); }
-        function toggleAuth(s) { document.getElementById('loginForm').classList.toggle('hidden-section', s); document.getElementById('signupForm').classList.toggle('hidden-section', !s); }
-        function adminClick() { (window.c=(window.c||0)+1)>=5?document.getElementById('adminModal').classList.add('active'):null; }
-        window.onload = () => { if(currentUsername) initApp(); };
-    </script>
-</body>
-</html>
+        async function buyProduct(n, p) {
+            const uRef = db.ref('users/'+currentUsername);
+            const u = (await uRef.once('value')).val();
+            const sRef = db.ref('stocks/'+n);
+            const s = (await sRef.once('value')).val() || [];
+            if(u.balance < p) return alert("Saldo tidak cukup!");
+            if(s.length === 0) return alert("Stok habis!");
+            if(confirm(`Beli ${n}?`)) {
+                const acc = s.shift();
+                const hist = u.history || [];
+                hist.unshift({ id: 'TX'+Date.now(), product: n, account: acc, date: new Date().toLocaleString(), price: p });
+                await uRef.update({ balance: u.balance - p, history: hist });
+                await sRef.set(s);
+                await db.ref('global_tx').push({ user: currentUsername, product: n, pr
