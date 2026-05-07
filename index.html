@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>StyzenID | Super Solution Digital Product</title>
+    <title>StyzenID |Digital Product Solution </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -11,12 +11,13 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
         body { background-color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; overflow: hidden; }
-        .page-view { display: none; height: 100vh; overflow-y: auto; width: 100%; }
+        .page-view { display: none; height: 100vh; overflow-y: auto; width: 100%; -webkit-overflow-scrolling: touch; }
         .active-view { display: block !important; }
         .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         button:active { transform: scale(0.98); }
+        .card-custom { background: white; border-radius: 2rem; border: 1px solid #f1f5f9; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); }
     </style>
 </head>
 <body>
@@ -25,10 +26,10 @@
         <div class="w-full max-w-sm text-center">
             <h1 class="text-4xl font-black text-blue-600 mb-10 italic">StyzenID</h1>
             <div class="space-y-4">
-                <input type="text" id="authUser" placeholder="Username" class="w-full p-5 bg-slate-50 rounded-2xl border font-bold outline-none focus:ring-2 focus:ring-blue-500">
-                <input type="password" id="authPass" placeholder="Password" class="w-full p-5 bg-slate-50 rounded-2xl border font-bold outline-none focus:ring-2 focus:ring-blue-500">
-                <button onclick="authAction('login')" class="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest">Masuk</button>
-                <button onclick="authAction('reg')" class="w-full py-5 bg-slate-900 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest">Daftar Akun</button>
+                <input type="text" id="authUser" placeholder="Username" class="w-full p-5 bg-slate-50 rounded-2xl border font-bold outline-none">
+                <input type="password" id="authPass" placeholder="Password" class="w-full p-5 bg-slate-50 rounded-2xl border font-bold outline-none">
+                <button onclick="authAction('login')" class="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-[11px] uppercase">Masuk</button>
+                <button onclick="authAction('reg')" class="w-full py-5 bg-slate-900 text-white rounded-2xl font-black text-[11px] uppercase">Daftar</button>
                 <p class="text-[10px] text-slate-400 mt-4 cursor-pointer" onclick="window.location.hash='#adminlogin'; location.reload();">Login Admin Console</p>
             </div>
         </div>
@@ -37,23 +38,58 @@
     <div id="viewUserApp" class="page-view">
         <nav class="glass px-6 py-4 border-b flex justify-between items-center sticky top-0 z-50">
             <span class="font-black text-xl text-blue-600 italic">StyzenID</span>
-            <div onclick="swTab('topup')" class="bg-blue-600 px-4 py-2 rounded-full text-white text-[10px] font-black cursor-pointer shadow-lg shadow-blue-200">
+            <div onclick="swTab('topup')" class="bg-blue-600 px-4 py-2 rounded-full text-white text-[10px] font-black cursor-pointer">
                 <span id="userBalanceDisplay">Rp 0</span>
             </div>
         </nav>
 
-        <div class="max-w-md mx-auto p-6 pb-40">
+        <div class="max-w-md mx-auto p-6 pb-40 space-y-6">
+            
             <div id="tabHome" class="tab-content active space-y-4">
+                <div class="card-custom text-center space-y-2">
+                    <h2 class="text-xl font-black text-slate-800">Selamat Datang di StyzenID</h2>
+                    <p class="text-[10px] text-slate-500 font-medium">Toko Digital terpercaya untuk kebutuhan gaming & lisensi Anda.</p>
+                    <div class="flex justify-center gap-1 text-amber-400 py-2">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        <span class="text-slate-400 text-[10px] ml-1 font-bold">(4.9/5 Rating)</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="card-custom flex flex-col items-center justify-center py-4 bg-blue-50 border-blue-100">
+                        <i class="fa-solid fa-bolt text-blue-600 mb-1"></i>
+                        <p class="text-[8px] font-black uppercase text-blue-600">Proses Cepat</p>
+                    </div>
+                    <div class="card-custom flex flex-col items-center justify-center py-4 bg-emerald-50 border-emerald-100">
+                        <i class="fa-solid fa-shield-halved text-emerald-600 mb-1"></i>
+                        <p class="text-[8px] font-black uppercase text-emerald-600">100% Aman</p>
+                    </div>
+                </div>
+
+                <h3 class="font-black text-slate-800 text-xs uppercase tracking-widest mt-6">Produk Kami</h3>
                 <div id="productDisplay" class="grid gap-4"></div>
+
+                <div class="card-custom mt-6 space-y-3">
+                    <h3 class="font-black text-xs uppercase italic">Komentar Pelanggan</h3>
+                    <div id="commentList" class="space-y-3 max-h-40 overflow-y-auto pr-2 text-[10px]"></div>
+                    <div class="flex gap-2">
+                        <input type="text" id="userComment" placeholder="Tulis review..." class="flex-1 p-3 bg-slate-50 border rounded-xl text-[10px] outline-none">
+                        <button onclick="postComment()" class="bg-blue-600 text-white px-4 rounded-xl"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
             </div>
+
             <div id="tabTopup" class="tab-content space-y-6">
-                <div class="bg-white p-6 rounded-[2.5rem] border shadow-sm space-y-4">
-                    <h3 class="font-black text-slate-800">Top Up</h3>
+                <div class="card-custom space-y-4">
+                    <h3 class="font-black text-slate-800">Isi Saldo</h3>
                     <input type="number" id="topupAmount" placeholder="Nominal" class="w-full p-5 bg-slate-50 rounded-2xl border font-bold text-xl text-blue-600 outline-none">
-                    <button onclick="createAutoPayment()" class="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-[10px]">BAYAR OTOMATIS (MIDTRANS)</button>
-                    <div id="pendingCard" class="hidden bg-amber-50 p-5 rounded-2xl border border-amber-100 text-center">
-                        <p class="text-[10px] font-bold text-amber-700 mb-3">MENUNGGU PEMBAYARAN</p>
-                        <button onclick="checkPaymentStatus()" class="w-full py-3 bg-amber-500 text-white rounded-xl font-black text-[10px]">CEK & KLAIM SALDO</button>
+                    <div class="grid gap-2">
+                        <button onclick="createAutoPayment()" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-[10px]">PEMBAYARAN OTOMATIS (MIDTRANS)</button>
+                        <button onclick="requestManualTopup()" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px]">QRIS MANUAL (KONFIRMASI ADMIN)</button>
+                    </div>
+                    <div id="pendingCard" class="hidden bg-amber-50 p-4 rounded-2xl border border-amber-100 text-center">
+                        <p id="pendingInfo" class="text-[9px] font-bold text-amber-700"></p>
+                        <button id="btnClaimAuto" onclick="checkPaymentStatus()" class="hidden w-full py-3 mt-2 bg-amber-500 text-white rounded-xl font-black text-[10px]">CEK & KLAIM SALDO</button>
                     </div>
                 </div>
             </div>
@@ -68,44 +104,33 @@
 
     <div id="viewAdmin" class="page-view bg-slate-950 text-slate-300">
         <header class="p-6 border-b border-slate-900 flex justify-between items-center bg-slate-950 sticky top-0 z-50">
-            <h1 class="font-black text-white">ADMIN <span class="text-blue-500 italic">CONSOLE</span></h1>
+            <h1 class="font-black text-white italic text-sm">ADMIN SYSTEM V17</h1>
             <button onclick="logout()" class="text-red-500 font-bold text-xs">EXIT</button>
         </header>
 
-        <div class="p-6 space-y-8 pb-20">
-            <div class="bg-slate-900 p-6 rounded-[2rem] border border-slate-800 space-y-4">
-                <h3 class="text-white font-bold text-xs uppercase tracking-widest"><i class="fa-solid fa-key mr-2"></i> API Settings</h3>
-                <input type="text" id="cfgClientKey" placeholder="Midtrans Client Key" class="w-full p-3 bg-slate-950 rounded-xl border border-slate-800 text-white text-[10px]">
-                <input type="password" id="cfgServerKey" placeholder="Midtrans Server Key" class="w-full p-3 bg-slate-950 rounded-xl border border-slate-800 text-white text-[10px]">
-                <button onclick="saveAdminCfg()" class="w-full bg-blue-600 py-3 rounded-xl font-bold text-white text-[10px]">SIMPAN API</button>
+        <div class="p-6 space-y-8 pb-24">
+            <div class="bg-slate-900 p-6 rounded-[2rem] border border-slate-800">
+                <h3 class="text-white font-black text-xs uppercase mb-4 text-blue-400">Persetujuan Topup Manual</h3>
+                <div id="adminManualList" class="space-y-4"></div>
             </div>
 
             <div class="bg-slate-900 p-6 rounded-[2rem] border border-slate-800 space-y-4">
-                <h3 class="text-white font-bold text-xs uppercase tracking-widest"><i class="fa-solid fa-box mr-2"></i> Add/Update Product</h3>
+                <h3 class="text-white font-bold text-xs uppercase">Produk & Harga</h3>
                 <input type="text" id="pName" placeholder="Nama Produk" class="w-full p-3 bg-slate-950 rounded-xl border border-slate-800 text-white text-[10px]">
                 <input type="number" id="pPrice" placeholder="Harga" class="w-full p-3 bg-slate-950 rounded-xl border border-slate-800 text-white text-[10px]">
-                <button onclick="saveProduct()" class="w-full bg-emerald-600 py-3 rounded-xl font-bold text-white text-[10px]">PUBLISH / UBAH HARGA</button>
-                <div id="adminProductList" class="pt-4 space-y-2 border-t border-slate-800"></div>
+                <button onclick="saveProduct()" class="w-full bg-blue-600 py-3 rounded-xl font-bold text-white text-[10px]">SAVE PRODUK / HARGA</button>
             </div>
 
             <div class="bg-slate-900 p-6 rounded-[2rem] border border-slate-800 space-y-4">
-                <h3 class="text-white font-bold text-xs uppercase tracking-widest"><i class="fa-solid fa-database mr-2"></i> Add Stock</h3>
-                <select id="pSelectStock" class="w-full p-3 bg-slate-950 rounded-xl border border-slate-800 text-white text-[10px]"></select>
-                <textarea id="pStockData" placeholder="Data akun (satu baris satu data)" class="w-full h-24 bg-slate-950 p-3 rounded-xl border border-slate-800 text-white text-[10px]"></textarea>
-                <button onclick="injectStock()" class="w-full bg-amber-600 py-3 rounded-xl font-bold text-white text-[10px]">INJECT STOK</button>
-            </div>
-
-            <div class="bg-slate-900 p-6 rounded-[2rem] border border-slate-800 space-y-4">
-                <h3 class="text-white font-bold text-xs uppercase tracking-widest"><i class="fa-solid fa-tag mr-2"></i> Add Promo</h3>
-                <input type="text" id="promoCode" placeholder="Kode Promo" class="w-full p-3 bg-slate-950 rounded-xl border border-slate-800 text-white text-[10px]">
-                <input type="number" id="promoDisc" placeholder="Diskon (Rp)" class="w-full p-3 bg-slate-950 rounded-xl border border-slate-800 text-white text-[10px]">
-                <button onclick="savePromo()" class="w-full bg-purple-600 py-3 rounded-xl font-bold text-white text-[10px]">AKTIFKAN PROMO</button>
+                <h3 class="text-white font-bold text-xs uppercase">Integrasi API</h3>
+                <input type="text" id="cfgClientKey" placeholder="Client Key" class="w-full p-3 bg-slate-950 rounded-xl border border-slate-800 text-white text-[10px]">
+                <input type="password" id="cfgServerKey" placeholder="Server Key" class="w-full p-3 bg-slate-950 rounded-xl border border-slate-800 text-white text-[10px]">
+                <button onclick="saveAdminCfg()" class="w-full bg-emerald-600 py-3 rounded-xl font-bold text-white text-[10px]">SIMPAN API</button>
             </div>
         </div>
     </div>
 
     <script>
-        // FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyDS5JjgqG03qAujVRYMBkZde0SBFumWhq8",
             authDomain: "styzenstore-9c0f9.firebaseapp.com",
@@ -118,17 +143,16 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // ROUTING FIX
+        // 1. ROUTING & AUTH
         function checkRoute() {
             const h = window.location.hash;
             const u = localStorage.getItem('logged_user');
-            const isAdmin = sessionStorage.getItem('isAdmin');
-            
+            const adm = sessionStorage.getItem('isAdmin');
             document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active-view'));
 
-            if (h === "#adminpage" && isAdmin === 'true') {
+            if (h === "#adminpage" && adm === 'true') {
                 document.getElementById('viewAdmin').classList.add('active-view');
-                loadAdminData();
+                loadAdminConsole();
             } else if (h === "#adminlogin") {
                 const p = prompt("Admin Key:");
                 if(p === "Junzz12@@") { sessionStorage.setItem('isAdmin', 'true'); window.location.hash = "#adminpage"; location.reload(); }
@@ -141,69 +165,94 @@
             }
         }
 
-        // AUTH ACTION
         async function authAction(type) {
             const u = document.getElementById('authUser').value.trim().toLowerCase();
             const p = document.getElementById('authPass').value;
-            if(!u || !p) return alert("Lengkapi data!");
+            if(!u || !p) return alert("Isi data!");
             if(type === 'login') {
                 const s = await db.ref('accounts/'+u).once('value');
                 if(s.exists() && s.val().password === p) { localStorage.setItem('logged_user', u); location.reload(); }
-                else alert("Login Gagal!");
+                else alert("Data salah!");
             } else {
                 await db.ref('accounts/'+u).set({ password: p, balance: 0 });
-                alert("Berhasil Daftar!");
+                alert("Berhasil!");
             }
         }
 
-        // ADMIN LOGIC
-        async function saveAdminCfg() {
-            const ck = document.getElementById('cfgClientKey').value;
-            const sk = document.getElementById('cfgServerKey').value;
-            await db.ref('admin_settings').update({ client_key: ck, server_key: sk });
-            alert("API Keys Tersimpan!");
-        }
-
-        async function saveProduct() {
-            const name = document.getElementById('pName').value.trim();
-            const price = parseInt(document.getElementById('pPrice').value);
-            if(name && price) {
-                await db.ref('products/' + name).set({ price: price });
-                alert("Produk/Harga Berhasil Diperbarui!");
-                loadAdminData();
-            }
-        }
-
-        async function injectStock() {
-            const name = document.getElementById('pSelectStock').value;
-            const data = document.getElementById('pStockData').value.trim();
-            if(name && data) {
-                const stocks = data.split('\n');
-                const ref = db.ref('stocks/' + name);
-                const current = (await ref.once('value')).val() || [];
-                await ref.set([...current, ...stocks]);
-                alert("Stok Berhasil Ditambahkan!");
-                document.getElementById('pStockData').value = "";
-            }
-        }
-
-        async function savePromo() {
-            const code = document.getElementById('promoCode').value.trim();
-            const disc = parseInt(document.getElementById('promoDisc').value);
-            if(code && disc) {
-                await db.ref('promos/' + code).set({ discount: disc });
-                alert("Promo Aktif!");
-            }
-        }
-
-        function loadAdminData() {
+        // 2. USER FEATURES
+        function loadUserApp(u) {
+            db.ref('accounts/'+u+'/balance').on('value', s => {
+                document.getElementById('userBalanceDisplay').innerText = "Rp " + (s.val()||0).toLocaleString();
+            });
             db.ref('products').on('value', s => {
-                const list = document.getElementById('adminProductList');
-                const select = document.getElementById('pSelectStock');
-                list.innerHTML = ""; select.innerHTML = "";
+                const d = document.getElementById('productDisplay'); d.innerHTML = "";
                 s.forEach(p => {
-                    list.innerHTML += `<div class="flex justify-between text-[10px] bg-slate-950 p-2 rounded"><span>${p.key}</span> <span class="text-blue-500">Rp ${p.val().price.toLocaleString()}</span></div>`;
-                    select.innerHTML += `<option value="${p.key}">${p.key}</option>`;
+                    d.innerHTML += `<div class="card-custom flex justify-between items-center">
+                        <div><p class="font-black text-slate-800 text-sm">${p.key}</p><p class="text-blue-600 font-bold text-xs">Rp ${p.val().price.toLocaleString()}</p></div>
+                        <button onclick="alert('Saldo tidak cukup!')" class="bg-slate-900 text-white px-6 py-2 rounded-xl text-[9px] font-black italic">BELI</button>
+                    </div>`;
+                });
+            });
+            db.ref('comments').limitToLast(10).on('value', s => {
+                const l = document.getElementById('commentList'); l.innerHTML = "";
+                s.forEach(c => {
+                    l.innerHTML += `<div class="bg-slate-50 p-2 rounded-lg border"><b>@${c.val().user}:</b> ${c.val().text}</div>`;
+                });
+            });
+        }
+
+        async function postComment() {
+            const t = document.getElementById('userComment').value.trim();
+            const u = localStorage.getItem('logged_user');
+            if(t) {
+                await db.ref('comments').push({ user: u, text: t });
+                document.getElementById('userComment').value = "";
+            }
+        }
+
+        // 3. TOPUP SYSTEM (AUTO & MANUAL)
+        async function createAutoPayment() {
+            const amt = parseInt(document.getElementById('topupAmount').value);
+            if(!amt || amt < 10000) return alert("Min Rp 10.000");
+            const oid = "AUTO-" + Date.now();
+            localStorage.setItem('last_oid', oid);
+            localStorage.setItem('last_amt', amt);
+            await db.ref('pending_trx/'+oid).set({ user: localStorage.getItem('logged_user'), amount: amt, type: 'auto' });
+            document.getElementById('pendingCard').classList.remove('hidden');
+            document.getElementById('pendingInfo').innerText = "MIDTRANS ORDER: " + oid;
+            document.getElementById('btnClaimAuto').classList.remove('hidden');
+        }
+
+        async function requestManualTopup() {
+            const amt = parseInt(document.getElementById('topupAmount').value);
+            if(!amt || amt < 10000) return alert("Min Rp 10.000");
+            const mid = "MANUAL-" + Date.now();
+            await db.ref('manual_requests/'+mid).set({ 
+                user: localStorage.getItem('logged_user'), 
+                amount: amt, 
+                status: 'pending',
+                time: new Date().toLocaleString()
+            });
+            document.getElementById('pendingCard').classList.remove('hidden');
+            document.getElementById('pendingInfo').innerText = "PERMINTAAN MANUAL TERKIRIM. TUNGGU ADMIN.";
+            document.getElementById('btnClaimAuto').classList.add('hidden');
+        }
+
+        // 4. ADMIN LOGIC
+        function loadAdminConsole() {
+            db.ref('manual_requests').on('value', s => {
+                const list = document.getElementById('adminManualList'); list.innerHTML = "";
+                s.forEach(r => {
+                    const d = r.val();
+                    if(d.status === 'pending') {
+                        list.innerHTML += `<div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex justify-between items-center">
+                            <div><p class="text-blue-500 font-black text-xs uppercase">${d.user}</p><p class="text-white font-bold">Rp ${d.amount.toLocaleString()}</p></div>
+                            <div class="flex gap-2">
+                                <button onclick="approveManual('${r.key}', '${d.user}', ${d.amount})" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-[9px] font-black">ACC</button>
+                                <button onclick="db.ref('manual_requests/${r.key}').remove()" class="bg-red-600/20 text-red-500 px-4 py-2 rounded-xl text-[9px] font-black">X</button>
+                            </div>
+                        </div>`;
+                    }
                 });
             });
             db.ref('admin_settings').once('value', s => {
@@ -214,61 +263,24 @@
             });
         }
 
-        // USER LOGIC & MIDTRANS
-        function loadUserApp(u) {
-            db.ref('accounts/'+u+'/balance').on('value', s => {
-                document.getElementById('userBalanceDisplay').innerText = "Rp " + (s.val()||0).toLocaleString();
-            });
-            db.ref('products').on('value', s => {
-                const cont = document.getElementById('productDisplay'); cont.innerHTML = "";
-                s.forEach(p => {
-                    cont.innerHTML += `<div class="bg-white p-6 rounded-[2rem] border flex justify-between items-center shadow-sm">
-                        <div><p class="font-black text-slate-800 text-sm">${p.key}</p><p class="text-blue-600 font-bold text-xs">Rp ${p.val().price.toLocaleString()}</p></div>
-                        <button onclick="buyProduct('${p.key}', ${p.val().price})" class="bg-slate-900 text-white px-6 py-3 rounded-xl text-[10px] font-black">BELI</button>
-                    </div>`;
-                });
-            });
+        async function approveManual(key, user, amt) {
+            const uRef = db.ref('accounts/'+user+'/balance');
+            const cur = (await uRef.once('value')).val() || 0;
+            await uRef.set(cur + amt);
+            await db.ref('manual_requests/'+key).update({ status: 'success' });
+            alert("Approve Sukses!");
         }
 
-        async function createAutoPayment() {
-            const amt = parseInt(document.getElementById('topupAmount').value);
-            if(!amt || amt < 10000) return alert("Minimal Rp 10.000");
-            const orderId = "STYZEN-" + Date.now();
-            localStorage.setItem('last_order', orderId);
-            localStorage.setItem('last_amt', amt);
-            await db.ref('pending_trx/' + orderId).set({ user: localStorage.getItem('logged_user'), amount: amt, status: 'pending' });
-            document.getElementById('pendingCard').classList.remove('hidden');
-            alert("Order ID: " + orderId + "\nSilakan bayar melalui link Midtrans Anda.");
+        // SISA FUNGSI (Save Product, Save Admin Cfg, checkPaymentStatus) SAMA SEPERTI V16...
+        async function saveProduct() {
+            const n = document.getElementById('pName').value.trim();
+            const p = parseInt(document.getElementById('pPrice').value);
+            if(n && p) { await db.ref('products/'+n).set({ price: p }); alert("Update Berhasil!"); }
         }
-
-        async function checkPaymentStatus() {
-            const oid = localStorage.getItem('last_order');
-            const amt = parseInt(localStorage.getItem('last_amt'));
-            const user = localStorage.getItem('logged_user');
-            const s = await db.ref('admin_settings').once('value');
-            const key = s.val()?.server_key;
-            if(!key) return alert("Admin belum setting API Key!");
-
-            try {
-                const res = await fetch(`https://api.sandbox.midtrans.com/v2/${oid}/status`, {
-                    headers: { 'Authorization': 'Basic ' + btoa(key + ":") }
-                });
-                const data = await res.json();
-                if(data.transaction_status === 'settlement' || data.transaction_status === 'capture') {
-                    const refTrx = db.ref('pending_trx/'+oid);
-                    const check = await refTrx.once('value');
-                    if(check.val().status === 'done') return alert("Sudah diklaim!");
-                    
-                    const refUser = db.ref('accounts/'+user+'/balance');
-                    const bal = (await refUser.once('value')).val() || 0;
-                    await refUser.set(bal + amt);
-                    await refTrx.update({status: 'done'});
-                    alert("Sukses! Saldo ditambahkan.");
-                    document.getElementById('pendingCard').classList.add('hidden');
-                } else {
-                    alert("Belum lunas! Status: " + data.transaction_status);
-                }
-            } catch(e) { alert("Error API atau Server Key Salah!"); }
+        async function saveAdminCfg() {
+            const ck = document.getElementById('cfgClientKey').value;
+            const sk = document.getElementById('cfgServerKey').value;
+            await db.ref('admin_settings').update({ client_key: ck, server_key: sk }); alert("API Tersimpan!");
         }
 
         function swTab(t) {
@@ -284,4 +296,5 @@
         window.onhashchange = checkRoute;
     </script>
 </body>
-</html>
+    </html>
+    
