@@ -11,98 +11,66 @@
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body { background-color: #ffffff; color: #0f172a; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .glass-header { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
-        .hero-gradient { background: radial-gradient(circle at top right, #eff6ff, transparent); }
+        body { background-color: #ffffff; color: #0f172a; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+        
+        /* Utility for showing/hiding sections */
+        .hidden-node { display: none !important; }
+        .visible-node { display: block !important; }
+        .visible-flex { display: flex !important; }
+
         .side-menu { transform: translateX(100%); transition: transform 0.3s ease-in-out; }
         .side-menu.active { transform: translateX(0); }
-        .tab-content, .auth-form, #adminLayout, #userApp { display: none; }
-        .active { display: block !important; }
-        #homePage { display: block; } /* Default visible */
+        
+        .admin-sub-tab { display: none; }
+        .admin-sub-tab.active { display: block; }
+        
+        .admin-sidebar-btn.active { background: #2563eb; color: white; }
     </style>
 </head>
 <body>
-
-    <script>
-      const firebaseConfig = {
-        apiKey: "AIzaSyDS5JjgqG03qAujVRYMBkZde0SBFumWhq8",
-        authDomain: "styzenstore-9c0f9.firebaseapp.com",
-        databaseURL: "https://styzenstore-9c0f9-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "styzenstore-9c0f9",
-        storageBucket: "styzenstore-9c0f9.firebasestorage.app",
-        messagingSenderId: "368732944579",
-        appId: "1:368732944579:web:f43ecd278f369aca0a8a76"
-      };
-      firebase.initializeApp(firebaseConfig);
-      const db = firebase.database();
-      const CEO_ACCOUNT = { user: "admin", email: "styzenstore@gmail.com", pass: "JunzzXD23@@" };
-    </script>
 
     <div id="sideMenu" class="side-menu fixed inset-y-0 right-0 w-64 bg-white shadow-2xl z-[1000] p-8">
         <button onclick="toggleMenu()" class="absolute top-6 right-6 text-slate-400"><i class="fa-solid fa-xmark text-2xl"></i></button>
         <div class="mt-12 space-y-6">
             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Menu Utama</h3>
-            <button onclick="showAuth('login')" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-lg shadow-blue-100 flex items-center justify-center gap-2">
+            <button onclick="showAuth('login')" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-lg flex items-center justify-center gap-2">
                 <i class="fa-solid fa-right-to-bracket"></i> Masuk User
             </button>
             <button onclick="showAuth('signup')" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold flex items-center justify-center gap-2">
                 <i class="fa-solid fa-user-plus"></i> Daftar Baru
             </button>
-            <hr class="border-slate-100">
-            <p class="text-[10px] text-center text-slate-400 font-medium">StyzenID &copy; 2026</p>
         </div>
     </div>
 
-    <div id="homePage" class="hero-gradient min-h-screen">
-        <nav class="glass-header sticky top-0 z-50 px-6 py-5 flex justify-between items-center">
+    <div id="homePage" class="visible-node">
+        <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md px-6 py-5 flex justify-between items-center border-b">
             <span class="font-black text-2xl tracking-tighter">Styzen<span class="text-blue-600">ID</span></span>
             <button onclick="toggleMenu()" class="w-10 h-10 flex items-center justify-center text-slate-900"><i class="fa-solid fa-bars-staggered text-xl"></i></button>
         </nav>
-
         <main class="max-w-4xl mx-auto px-6 py-20 text-center">
             <div class="inline-flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-full text-xs font-bold mb-8">
-                <i class="fa-solid fa-star"></i> Terpercaya oleh 2 Juta+ Pengguna
+                <i class="fa-solid fa-star text-orange-400"></i> Terpercaya oleh 2 Juta+ Pengguna
             </div>
-            <h1 class="text-5xl lg:text-7xl font-black text-slate-900 leading-tight mb-6">
-                Pusat Produk Digital <span class="text-blue-600">Tercepat.</span>
-            </h1>
-            <p class="text-slate-500 text-lg mb-12 max-w-2xl mx-auto leading-relaxed">
-                Platform otomatis untuk kebutuhan akun premium, topup, dan layanan digital dengan sistem cloud instan. Transaksi aman, legal, dan bergaransi.
-            </p>
-
+            <h1 class="text-5xl lg:text-7xl font-black text-slate-900 leading-tight mb-6">Pusat Produk Digital <span class="text-blue-600">Tercepat.</span></h1>
+            <p class="text-slate-500 text-lg mb-12 max-w-2xl mx-auto leading-relaxed">Platform otomatis untuk kebutuhan akun premium, topup, dan layanan digital.</p>
             <div class="grid grid-cols-2 md:grid-cols-3 gap-6 mb-20">
-                <div class="p-8 bg-white rounded-[2.5rem] shadow-sm border border-slate-100">
-                    <h2 class="text-3xl font-black text-blue-600 mb-1">2M+</h2>
-                    <p class="text-xs font-bold text-slate-400 uppercase">Aktif User</p>
-                </div>
-                <div class="p-8 bg-white rounded-[2.5rem] shadow-sm border border-slate-100">
-                    <div class="flex justify-center gap-1 text-orange-400 mb-2">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                    </div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Rating 5.0</p>
-                </div>
-                <div class="p-8 bg-white rounded-[2.5rem] shadow-sm border border-slate-100 col-span-2 md:col-span-1">
-                    <h2 class="text-3xl font-black text-blue-600 mb-1">24/7</h2>
-                    <p class="text-xs font-bold text-slate-400 uppercase">Support</p>
-                </div>
+                <div class="p-8 bg-white rounded-[2.5rem] border"><h2 class="text-3xl font-black text-blue-600">2M+</h2><p class="text-[10px] font-bold text-slate-400">AKTIF USER</p></div>
+                <div class="p-8 bg-white rounded-[2.5rem] border"><div class="flex justify-center gap-1 text-orange-400 mb-2"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><p class="text-[10px] font-bold text-slate-400 uppercase">Rating 5.0</p></div>
+                <div class="p-8 bg-white rounded-[2.5rem] border col-span-2 md:col-span-1"><h2 class="text-3xl font-black text-blue-600">24/7</h2><p class="text-[10px] font-bold text-slate-400">SUPPORT</p></div>
             </div>
-
-            <button onclick="toggleMenu()" class="px-10 py-5 bg-blue-600 text-white rounded-3xl font-black text-sm uppercase tracking-widest shadow-2xl shadow-blue-200 hover:scale-105 transition-transform">
-                Mulai Belanja Sekarang
-            </button>
         </main>
     </div>
 
-    <div id="userAuthOverlay" class="fixed inset-0 z-[2000] bg-white hidden flex-col items-center justify-center p-6">
+    <div id="userAuthOverlay" class="fixed inset-0 z-[2000] bg-white hidden-node flex-col items-center justify-center p-6">
         <button onclick="closeAuth()" class="absolute top-10 left-10 text-slate-400"><i class="fa-solid fa-arrow-left text-xl"></i></button>
         <div class="max-w-sm w-full">
-            <div id="loginForm" class="auth-form active space-y-4">
+            <div id="loginForm" class="auth-form hidden-node space-y-4">
                 <h2 class="text-3xl font-black mb-8">Selamat Datang.</h2>
                 <input type="text" id="userInp" placeholder="Username" class="w-full bg-slate-50 p-5 rounded-2xl outline-none focus:ring-2 focus:ring-blue-600">
                 <input type="password" id="passInp" placeholder="Password" class="w-full bg-slate-50 p-5 rounded-2xl outline-none focus:ring-2 focus:ring-blue-600">
                 <button onclick="handleAuth('login')" class="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold">Masuk</button>
             </div>
-            <div id="signupForm" class="auth-form space-y-4">
+            <div id="signupForm" class="auth-form hidden-node space-y-4">
                 <h2 class="text-3xl font-black mb-8">Buat Akun.</h2>
                 <input type="text" id="regUser" placeholder="Username Baru" class="w-full bg-slate-50 p-5 rounded-2xl outline-none focus:ring-2 focus:ring-blue-600">
                 <input type="password" id="regPass" placeholder="Password Baru" class="w-full bg-slate-50 p-5 rounded-2xl outline-none focus:ring-2 focus:ring-blue-600">
@@ -111,7 +79,7 @@
         </div>
     </div>
 
-    <div id="userApp">
+    <div id="userApp" class="hidden-node min-h-screen pb-32">
         <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md px-6 py-4 border-b flex justify-between items-center">
             <span class="font-black text-xl">Styzen<span class="text-blue-600">ID</span></span>
             <div class="flex items-center gap-3">
@@ -120,55 +88,75 @@
             </div>
         </nav>
         <div class="max-w-7xl mx-auto p-6">
-            <section id="tab-store" class="tab-content active"><div id="productDisplay" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div></section>
-            <section id="tab-history" class="tab-content"><div id="historyList" class="space-y-4"></div></section>
+            <section id="tab-store" class="visible-node"><div id="productDisplay" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div></section>
+            <section id="tab-history" class="hidden-node"><div id="historyList" class="space-y-4"></div></section>
         </div>
-        <div class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white/90 backdrop-blur-xl border rounded-[2.5rem] shadow-2xl p-2 flex justify-around items-center z-50">
-            <button onclick="swTab('store')" id="btn-store" class="flex-1 py-4 rounded-[2rem] text-[10px] font-black uppercase flex flex-col items-center gap-1 active text-blue-600"><i class="fa-solid fa-house"></i><span>Home</span></button>
+        <div class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white border rounded-[2.5rem] shadow-2xl p-2 flex justify-around items-center z-50">
+            <button onclick="swTab('store')" id="btn-store" class="flex-1 py-4 rounded-[2rem] text-[10px] font-black uppercase flex flex-col items-center gap-1 text-blue-600"><i class="fa-solid fa-house"></i><span>Home</span></button>
             <button onclick="swTab('history')" id="btn-history" class="flex-1 py-4 rounded-[2rem] text-[10px] font-black uppercase flex flex-col items-center gap-1 text-slate-300"><i class="fa-solid fa-receipt"></i><span>Orders</span></button>
         </div>
     </div>
 
-    <div id="adminLayout" class="bg-slate-950 min-h-screen text-slate-200 p-6 lg:p-12">
+    <div id="adminLayout" class="hidden-node bg-slate-950 min-h-screen text-slate-200">
         <div id="adminAuthSection" class="fixed inset-0 bg-slate-950 z-[3000] flex items-center justify-center p-6">
             <div class="max-w-sm w-full text-center">
                 <h2 class="text-2xl font-black mb-8 uppercase tracking-widest text-white">#C-Control Admin</h2>
                 <div class="bg-slate-900 p-8 rounded-[2.5rem] border border-slate-800 space-y-4">
-                    <input type="text" id="admUser" placeholder="ID" class="w-full p-4 bg-slate-800 rounded-2xl outline-none text-white border border-transparent focus:border-blue-500">
-                    <input type="password" id="admPass" placeholder="Secret" class="w-full p-4 bg-slate-800 rounded-2xl outline-none text-white border border-transparent focus:border-blue-500">
+                    <input type="text" id="admUser" placeholder="ID" class="w-full p-4 bg-slate-800 rounded-2xl outline-none text-white focus:border-blue-500">
+                    <input type="password" id="admPass" placeholder="Secret" class="w-full p-4 bg-slate-800 rounded-2xl outline-none text-white focus:border-blue-500">
                     <button onclick="verifyAdmin()" class="w-full py-4 bg-blue-600 rounded-2xl font-bold uppercase text-[10px]">Verify</button>
                 </div>
             </div>
         </div>
 
-        <div id="adminApp" class="hidden">
+        <div id="adminApp" class="hidden-node p-6 lg:p-12">
             <div class="flex justify-between items-center mb-12">
-                <h1 class="text-xl font-black">CONSOLE<span class="text-blue-500">V.2</span></h1>
+                <h1 class="text-xl font-black uppercase tracking-tighter">Console <span class="text-blue-500">System</span></h1>
                 <button onclick="location.href='index.html'" class="text-[10px] font-bold bg-slate-900 px-4 py-2 rounded-lg border border-slate-800">Exit</button>
             </div>
             <div class="flex flex-col lg:flex-row gap-10">
-                <aside class="lg:w-64 flex lg:flex-col gap-2 overflow-x-auto">
+                <aside class="lg:w-64 flex flex-col gap-2">
                     <button onclick="swAdm('dash')" id="as-dash" class="admin-sidebar-btn active p-4 rounded-2xl text-left text-[10px] font-bold flex items-center gap-3"><i class="fa-solid fa-gauge"></i> Dashboard</button>
                     <button onclick="swAdm('stock')" id="as-stock" class="admin-sidebar-btn p-4 rounded-2xl text-left text-[10px] font-bold flex items-center gap-3"><i class="fa-solid fa-box"></i> Inventory</button>
-                    <button onclick="swAdm('users')" id="as-users" class="admin-sidebar-btn p-4 rounded-2xl text-left text-[10px] font-bold flex items-center gap-3"><i class="fa-solid fa-users"></i> Users</button>
-                    <button onclick="swAdm('ceo')" id="as-ceo" class="admin-sidebar-btn p-4 rounded-2xl text-left text-[10px] font-bold flex items-center gap-3 text-orange-400"><i class="fa-solid fa-crown"></i> CEO</button>
+                    <button onclick="swAdm('users')" id="as-users" class="admin-sidebar-btn p-4 rounded-2xl text-left text-[10px] font-bold flex items-center gap-3"><i class="fa-solid fa-users"></i> Users Control</button>
+                    <button onclick="swAdm('ceo')" id="as-ceo" class="admin-sidebar-btn p-4 rounded-2xl text-left text-[10px] font-bold flex items-center gap-3 text-orange-400"><i class="fa-solid fa-crown"></i> CEO Root</button>
                 </aside>
                 <main class="flex-1">
                     <div id="ad-dash" class="admin-sub-tab active">
-                        <div class="grid grid-cols-2 gap-4"><div class="bg-slate-900 p-8 rounded-3xl border border-slate-800"><p class="text-[10px] text-slate-500 font-bold mb-2 uppercase">Sales</p><h2 id="stat-sales" class="text-2xl font-black text-white">Rp 0</h2></div><div class="bg-slate-900 p-8 rounded-3xl border border-slate-800"><p class="text-[10px] text-slate-500 font-bold mb-2 uppercase">Users</p><h2 id="stat-users" class="text-2xl font-black text-white">0</h2></div></div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800"><p class="text-[10px] text-slate-500 font-bold mb-2 uppercase">Sales</p><h2 id="stat-sales" class="text-2xl font-black text-white">Rp 0</h2></div>
+                            <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800"><p class="text-[10px] text-slate-500 font-bold mb-2 uppercase">Users</p><h2 id="stat-users" class="text-2xl font-black text-white">0</h2></div>
+                        </div>
                     </div>
                     <div id="ad-stock" class="admin-sub-tab">
                         <div class="grid lg:grid-cols-2 gap-6">
-                            <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 space-y-4"><input type="text" id="pName" placeholder="Name" class="w-full bg-slate-950 p-4 rounded-xl text-sm"><input type="number" id="pPrice" placeholder="Price" class="w-full bg-slate-950 p-4 rounded-xl text-sm"><button onclick="saveP()" class="w-full py-4 bg-blue-600 rounded-xl font-bold">Save</button></div>
-                            <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 space-y-4"><select id="pSel" class="w-full bg-slate-950 p-4 rounded-xl text-sm"></select><textarea id="pStock" placeholder="Data (line by line)" class="w-full bg-slate-950 p-4 rounded-xl text-xs h-32"></textarea><button onclick="addS()" class="w-full py-4 bg-slate-100 text-black rounded-xl font-bold">Inject</button></div>
+                            <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 space-y-4">
+                                <p class="text-[10px] font-bold text-blue-500 uppercase">Produk</p>
+                                <input type="text" id="pName" placeholder="Nama Produk" class="w-full bg-slate-950 p-4 rounded-xl text-sm border border-slate-800">
+                                <input type="number" id="pPrice" placeholder="Harga" class="w-full bg-slate-950 p-4 rounded-xl text-sm border border-slate-800">
+                                <button onclick="saveP()" class="w-full py-4 bg-blue-600 rounded-xl font-bold">Simpan</button>
+                            </div>
+                            <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 space-y-4">
+                                <p class="text-[10px] font-bold text-blue-500 uppercase">Stok Akun</p>
+                                <select id="pSel" class="w-full bg-slate-950 p-4 rounded-xl text-sm border border-slate-800"></select>
+                                <textarea id="pStock" placeholder="Data per baris..." class="w-full bg-slate-950 p-4 rounded-xl text-xs h-32 border border-slate-800"></textarea>
+                                <button onclick="addS()" class="w-full py-4 bg-slate-100 text-black rounded-xl font-bold uppercase text-[10px]">Inject Stock</button>
+                            </div>
                         </div>
                     </div>
                     <div id="ad-users" class="admin-sub-tab">
-                        <div class="bg-white p-10 rounded-[2.5rem] text-slate-950 mb-6"><div class="flex gap-4 mb-4"><input type="text" id="tUsr" placeholder="UserID" class="flex-1 bg-slate-100 p-4 rounded-xl"><input type="number" id="tAmt" placeholder="Amount" class="flex-1 bg-slate-100 p-4 rounded-xl"></div><div class="flex gap-2"><button onclick="modB('add')" class="flex-1 py-4 bg-blue-600 text-white rounded-xl font-bold">Credit</button><button onclick="modB('sub')" class="flex-1 py-4 bg-red-600 text-white rounded-xl font-bold">Debit</button></div></div>
-                        <div id="userList" class="space-y-2 text-xs"></div>
+                        <div class="bg-white p-10 rounded-[2.5rem] text-slate-950 mb-6">
+                            <h3 class="font-bold mb-4">Edit Saldo User</h3>
+                            <div class="flex gap-4 mb-4"><input type="text" id="tUsr" placeholder="UserID" class="flex-1 bg-slate-100 p-4 rounded-xl"><input type="number" id="tAmt" placeholder="Amount" class="flex-1 bg-slate-100 p-4 rounded-xl"></div>
+                            <div class="flex gap-2"><button onclick="modB('add')" class="flex-1 py-4 bg-blue-600 text-white rounded-xl font-bold">Credit</button><button onclick="modB('sub')" class="flex-1 py-4 bg-red-600 text-white rounded-xl font-bold">Debit</button></div>
+                        </div>
+                        <div id="userList" class="space-y-2"></div>
                     </div>
                     <div id="ad-ceo" class="admin-sub-tab">
-                        <div class="ceo-card p-10 rounded-[3rem] mb-6"><h3 class="font-black text-xl mb-4">Node Management</h3><div class="space-y-3"><input type="text" id="newAdmUser" placeholder="New ID" class="w-full bg-white/10 p-4 rounded-xl border border-white/10"><input type="password" id="newAdmPass" placeholder="Secret Key" class="w-full bg-white/10 p-4 rounded-xl border border-white/10"><button onclick="addNewAdmin()" class="w-full py-4 bg-white text-black rounded-xl font-bold uppercase text-[10px]">Add Node</button></div></div>
+                        <div class="bg-slate-900 p-10 rounded-3xl border border-slate-800 mb-6">
+                            <h3 class="font-black text-white mb-6">Multi-Admin Control (Max 3)</h3>
+                            <div class="space-y-3"><input type="text" id="newAdmUser" placeholder="New Admin ID" class="w-full bg-slate-950 p-4 rounded-xl border border-slate-800"><input type="password" id="newAdmPass" placeholder="Secret Key" class="w-full bg-slate-950 p-4 rounded-xl border border-slate-800"><button onclick="addNewAdmin()" class="w-full py-4 bg-blue-600 rounded-xl font-bold uppercase text-[10px]">Daftarkan Admin</button></div>
+                        </div>
                         <div id="adminList" class="space-y-2"></div>
                     </div>
                 </main>
@@ -177,59 +165,101 @@
     </div>
 
     <script>
+        // FIREBASE CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyDS5JjgqG03qAujVRYMBkZde0SBFumWhq8",
+            authDomain: "styzenstore-9c0f9.firebaseapp.com",
+            databaseURL: "https://styzenstore-9c0f9-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "styzenstore-9c0f9",
+            storageBucket: "styzenstore-9c0f9.firebasestorage.app",
+            messagingSenderId: "368732944579",
+            appId: "1:368732944579:web:f43ecd278f369aca0a8a76"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const CEO_ACCOUNT = { user: "admin", email: "styzenstore@gmail.com", pass: "JunzzXD23@@" };
+
         let curU = localStorage.getItem('st_user') || null;
+
+        // UI HELPERS
+        function toggleMenu() { document.getElementById('sideMenu').classList.toggle('active'); }
+        
+        function showAuth(mode) {
+            toggleMenu();
+            document.getElementById('userAuthOverlay').classList.add('visible-flex');
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.replace('visible-node', 'hidden-node'));
+            document.getElementById(mode + 'Form').classList.replace('hidden-node', 'visible-node');
+        }
+
+        function closeAuth() { document.getElementById('userAuthOverlay').classList.remove('visible-flex'); }
 
         // ROUTING SYSTEM
         function checkRoute() {
             const hash = window.location.hash;
+            // Reset all main layouts
+            document.getElementById('homePage').classList.replace('visible-node', 'hidden-node');
+            document.getElementById('userApp').classList.replace('visible-node', 'hidden-node');
+            document.getElementById('adminLayout').classList.replace('visible-node', 'hidden-node');
+
             if (hash === '#adminpage') {
-                document.getElementById('homePage').style.display = 'none';
-                document.getElementById('userApp').style.display = 'none';
-                document.getElementById('adminLayout').classList.add('active');
+                document.getElementById('adminLayout').classList.replace('hidden-node', 'visible-node');
+            } else if (curU) {
+                document.getElementById('userApp').classList.replace('hidden-node', 'visible-node');
+                renderP();
             } else {
-                document.getElementById('adminLayout').classList.remove('active');
-                if(curU) {
-                    document.getElementById('homePage').style.display = 'none';
-                    document.getElementById('userApp').classList.add('active');
-                    renderP();
-                } else {
-                    document.getElementById('homePage').style.display = 'block';
-                    document.getElementById('userApp').classList.remove('active');
-                }
+                document.getElementById('homePage').classList.replace('hidden-node', 'visible-node');
             }
         }
 
-        window.onload = checkRoute;
-        window.onhashchange = checkRoute;
-
-        // UI ACTIONS
-        function toggleMenu() { document.getElementById('sideMenu').classList.toggle('active'); }
-        function showAuth(mode) { 
-            toggleMenu();
-            document.getElementById('userAuthOverlay').classList.add('active-flex');
-            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-            document.getElementById(mode === 'login' ? 'loginForm' : 'signupForm').classList.add('active');
-        }
-        function closeAuth() { document.getElementById('userAuthOverlay').classList.remove('active-flex'); }
-
-        // CORE LOGIC (USER)
+        // USER AUTH
         async function handleAuth(mode) {
-            const u = document.getElementById(mode==='login'?'userInp':'regUser').value.trim().toLowerCase();
-            const p = document.getElementById(mode==='login'?'passInp':'regPass').value.trim();
+            const u = document.getElementById(mode === 'login' ? 'userInp' : 'regUser').value.trim().toLowerCase();
+            const p = document.getElementById(mode === 'login' ? 'passInp' : 'regPass').value.trim();
             if(!u || !p) return alert("Lengkapi data!");
-            const ref = db.ref('users/'+u);
+            
+            const ref = db.ref('users/' + u);
             const snap = await ref.once('value');
+
             if(mode === 'signup') {
                 if(snap.exists()) return alert("Username sudah ada!");
                 await ref.set({ username: u, password: p, balance: 0, history: [] });
-                alert("Berhasil!"); showAuth('login');
+                alert("Berhasil Daftar!"); showAuth('login');
             } else {
                 if(snap.exists() && snap.val().password === p) {
                     curU = u; localStorage.setItem('st_user', u); closeAuth(); checkRoute();
-                } else alert("Gagal!");
+                } else alert("Username/Password salah!");
             }
         }
 
+        // ADMIN LOGIC
+        async function verifyAdmin() {
+            const u = document.getElementById('admUser').value.trim();
+            const p = document.getElementById('admPass').value.trim();
+            if((u === CEO_ACCOUNT.user || u === CEO_ACCOUNT.email) && p === CEO_ACCOUNT.pass) return initAdmin(true);
+            const sub = await db.ref('admins/' + u).once('value');
+            if(sub.exists() && sub.val().password === p) return initAdmin(false);
+            alert("Akses Ditolak!");
+        }
+
+        function initAdmin(isCeo) {
+            document.getElementById('adminAuthSection').classList.add('hidden-node');
+            document.getElementById('adminApp').classList.replace('hidden-node', 'visible-node');
+            if(!isCeo) document.getElementById('as-ceo').style.display = 'none';
+            swAdm('dash');
+        }
+
+        function swAdm(s) {
+            document.querySelectorAll('.admin-sub-tab').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.admin-sidebar-btn').forEach(x => x.classList.remove('active'));
+            document.getElementById('ad-' + s).classList.add('active');
+            document.getElementById('as-' + s).classList.add('active');
+            if(s === 'ceo') renderAdmins();
+            if(s === 'users') renderUL();
+            if(s === 'stock') renderP();
+            updateStats();
+        }
+
+        // DATABASE FUNCTIONS
         async function renderP() {
             const pSnap = await db.ref('products').once('value');
             const sSnap = await db.ref('stocks').once('value');
@@ -238,143 +268,12 @@
             const d = document.getElementById('productDisplay');
             const s = document.getElementById('pSel');
             if(d) d.innerHTML = ''; if(s) s.innerHTML = '';
+            
             prods.forEach(p => {
                 const c = (stocks[p.name] || []).length;
-                if(d) d.innerHTML += `<div class="bg-white p-6 rounded-3xl border hover:shadow-xl transition-all"><div class="flex justify-between mb-4"><span class="bg-slate-50 p-2 rounded-lg font-bold">${p.name[0]}</span><span class="text-[10px] font-bold ${c>0?'text-emerald-500':'text-red-500'} uppercase">Stok: ${c}</span></div><h4 class="font-bold mb-6">${p.name}</h4><p class="text-xl font-black mb-4">Rp ${parseInt(p.price).toLocaleString()}</p><button onclick="buy('${p.name}', ${p.price})" class="w-full py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-bold uppercase tracking-widest">Beli</button></div>`;
+                if(d) d.innerHTML += `<div class="bg-white p-6 rounded-3xl border"><div class="flex justify-between mb-4"><span class="bg-slate-50 p-2 rounded-lg font-bold">${p.name[0]}</span><span class="text-[10px] font-bold ${c>0?'text-emerald-500':'text-red-500'}">STOK: ${c}</span></div><h4 class="font-bold mb-6">${p.name}</h4><p class="text-xl font-black mb-4">Rp ${p.price.toLocaleString()}</p><button onclick="buy('${p.name}', ${p.price})" class="w-full py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-bold">BELI</button></div>`;
                 if(s) s.innerHTML += `<option value="${p.name}">${p.name}</option>`;
             });
-            if(curU) {
-                const u = await db.ref('users/'+curU).once('value');
-                document.getElementById('userBalance').innerText = "Rp " + (u.val().balance || 0).toLocaleString();
-            }
-        }
 
-        async function buy(n, p) {
-            const uR = db.ref('users/'+curU);
-            const u = (await uR.once('value')).val();
-            const sR = db.ref('stocks/'+n);
-            const s = (await sR.once('value')).val() || [];
-            if(u.balance < p) return alert("Saldo kurang!");
-            if(s.length === 0) return alert("Stok habis!");
-            if(confirm(`Beli ${n}?`)) {
-                const acc = s.shift();
-                const h = u.history || [];
-                h.unshift({ product: n, data: acc, date: new Date().toLocaleString() });
-                await uR.update({ balance: u.balance - p, history: h });
-                await sR.set(s);
-                await db.ref('stats/sales').transaction(v => (v || 0) + p);
-                alert("Sukses!"); renderP();
-            }
-        }
-
-        function swTab(t) {
-            document.querySelectorAll('.tab-content, #userApp .fixed button').forEach(x => x.classList.remove('active', 'text-blue-600'));
-            document.getElementById('tab-'+t).classList.add('active');
-            document.getElementById('btn-'+t).classList.add('active', 'text-blue-600');
-            if(t==='history') renderH();
-        }
-
-        async function renderH() {
-            const u = (await db.ref('users/'+curU).once('value')).val();
-            let h = ''; (u.history || []).forEach(x => h += `<div class="bg-white p-5 rounded-3xl border"><p class="text-[10px] font-bold text-blue-600 mb-2">${x.product}</p><code class="block bg-slate-50 p-4 rounded-xl text-xs break-all">${x.data}</code></div>`);
-            document.getElementById('historyList').innerHTML = h || '<p class="text-center text-slate-400 py-20">Belum ada pesanan.</p>';
-        }
-
-        // ADMIN LOGIC
-        async function verifyAdmin() {
-            const u = document.getElementById('admUser').value.trim();
-            const p = document.getElementById('admPass').value.trim();
-            if((u===CEO_ACCOUNT.user||u===CEO_ACCOUNT.email)&&p===CEO_ACCOUNT.pass) return initAdmin(true);
-            const sub = await db.ref('admins/'+u).once('value');
-            if(sub.exists() && sub.val().password === p) return initAdmin(false);
-            alert("Akses Ditolak!");
-        }
-
-        function initAdmin(isCeo) {
-            document.getElementById('adminAuthSection').style.display = 'none';
-            document.getElementById('adminApp').classList.remove('hidden');
-            if(!isCeo) document.getElementById('as-ceo').style.display = 'none';
-            swAdm('dash');
-        }
-
-        function swAdm(s) {
-            document.querySelectorAll('.admin-sub-tab, .admin-sidebar-btn').forEach(x => x.classList.remove('active'));
-            document.getElementById('ad-'+s).classList.add('active');
-            document.getElementById('as-'+s).classList.add('active');
-            if(s==='ceo') renderAdmins();
-            if(s==='users') renderUL();
-            updateStats();
-        }
-
-        async function updateStats() {
-            const uS = await db.ref('users').once('value');
-            const sS = await db.ref('stats/sales').once('value');
-            document.getElementById('stat-sales').innerText = "Rp " + (sS.val() || 0).toLocaleString();
-            document.getElementById('stat-users').innerText = Object.keys(uS.val() || {}).length;
-        }
-
-        async function modB(m) {
-            const t = document.getElementById('tUsr').value.trim().toLowerCase();
-            const a = parseInt(document.getElementById('tAmt').value);
-            if(!t || !a) return;
-            const r = db.ref('users/'+t);
-            const s = await r.once('value');
-            if(!s.exists()) return alert("Not Found");
-            await r.update({ balance: m==='add'?(s.val().balance+a):Math.max(0, s.val().balance-a) });
-            alert("Success"); renderUL();
-        }
-
-        async function renderUL() {
-            const s = await db.ref('users').once('value');
-            const l = document.getElementById('userList');
-            l.innerHTML = '';
-            Object.values(s.val() || {}).forEach(u => {
-                l.innerHTML += `<div class="p-4 bg-slate-900 border border-slate-800 rounded-xl flex justify-between"><span>${u.username}</span><span class="text-blue-400">Rp ${u.balance.toLocaleString()}</span></div>`;
-            });
-        }
-
-        async function saveP() {
-            const n = document.getElementById('pName').value.toUpperCase();
-            const p = parseInt(document.getElementById('pPrice').value);
-            if(!n || !p) return;
-            const r = db.ref('products');
-            let list = (await r.once('value')).val() || [];
-            const i = list.findIndex(x=>x.name===n);
-            if(i>-1) list[i].price = p; else list.push({name:n, price:p});
-            await r.set(list); alert("Saved"); renderP();
-        }
-
-        async function addS() {
-            const p = document.getElementById('pSel').value;
-            const v = document.getElementById('pStock').value.trim();
-            if(!v) return;
-            const r = db.ref('stocks/'+p);
-            let s = (await r.once('value')).val() || [];
-            s = [...s, ...v.split('\n')];
-            await r.set(s); document.getElementById('pStock').value = ''; alert("Injected"); renderP();
-        }
-
-        async function addNewAdmin() {
-            const u = document.getElementById('newAdmUser').value.trim();
-            const p = document.getElementById('newAdmPass').value.trim();
-            if(!u || !p) return;
-            const snap = await db.ref('admins').once('value');
-            if(Object.keys(snap.val() || {}).length >= 3) return alert("Limit!");
-            await db.ref('admins/'+u).set({ password: p });
-            alert("Success"); renderAdmins();
-        }
-
-        async function renderAdmins() {
-            const data = (await db.ref('admins').once('value')).val() || {};
-            const list = document.getElementById('adminList');
-            list.innerHTML = '';
-            Object.keys(data).forEach(k => {
-                list.innerHTML += `<div class="p-4 bg-slate-900 border border-slate-800 rounded-xl flex justify-between items-center"><span>ID: ${k}</span><button onclick="delAdm('${k}')" class="text-red-400">Del</button></div>`;
-            });
-        }
-
-        async function delAdm(k) { if(confirm("Hapus?")) { await db.ref('admins/'+k).remove(); renderAdmins(); } }
-        function logout() { localStorage.removeItem('st_user'); location.reload(); }
-    </script>
-</body>
-</html>
+            if(curU && document.getElementById('userBalance')) {
+           
